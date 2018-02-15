@@ -1,4 +1,4 @@
-import {APIDescription, APIDirectory, APIEndPoint, APIRouteType} from "./APIDescription";
+import {APIDescription, APIDirectory, APIEndPoint, APIRouteType} from "./api/APIDescription";
 import * as express from "express";
 
 
