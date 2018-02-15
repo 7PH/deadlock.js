@@ -1,8 +1,9 @@
 {
   "name": "deadlockjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript library for Node.js/Express REST API management with automatic documentation generation",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +18,7 @@
     "nodejs",
     "express"
   ],
-  "author": "Benjamin Raymond",
+  "author": "Benjamin Raymond <b.raymond@protonmail.ch>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/7PH/DeadLockJS/issues"
