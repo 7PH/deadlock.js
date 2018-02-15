@@ -1,12 +1,17 @@
 import {RequestHandler, Request, Response} from "express";
 import {NextFunction} from "express-serve-static-core";
 
+/** The GateKeeper provides a simple way to mitigate http flood,
+ *      by delaying requests so only one can be executing at a time.
+ *  Using this middleware with nginx (for instance) to limit the number of simultaneous active TCP connections
+ *      in order to drop the unwanted traffic. */
 export class GateKeeper {
 
+    /** Currently actives (waiting or executing) requests per IP */
     public static requests: Map<string, Map<NextFunction, boolean>> = new Map();
 
+    /** Middleware to register in your API Description */
     public static middle: RequestHandler = function(req: Request, res: Response, next: NextFunction) {
-
         const ip: string = req.connection.remoteAddress || '';
         let pending: Map<NextFunction, boolean>;
 

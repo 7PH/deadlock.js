@@ -13,7 +13,7 @@ export class DeadLockJS {
      * @returns {e.Router}
      */
     static buildRouter (api: APIDescription): express.Router {
-        return DeadLockJS.buildRouterForRoutes([api.root], api.root, '');
+        return DeadLockJS.buildRouterForRoutes([api.root], api.root, '', 0);
     }
 
     /**
@@ -23,12 +23,12 @@ export class DeadLockJS {
      * @param {string} path Current path (for output)
      * @returns {e.Router}
      */
-    static buildRouterForRoutes(routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string): express.Router {
+    static buildRouterForRoutes(routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
         const router: express.Router = express.Router();
 
         // attach the middleware(s)
-        if (parent.middleware != null)
+        if (parent.middleware != null && depth > 0)
             router.use(parent.middleware);
 
         // attach directory routes
@@ -47,7 +47,7 @@ export class DeadLockJS {
                     // output new path
                     //console.log(path + " (directory)");
                     // recursively builds the router for sub-directory
-                    let subRouter: express.Router = DeadLockJS.buildRouterForRoutes((route as APIDirectory).routes, route as APIDirectory, path);
+                    let subRouter: express.Router = DeadLockJS.buildRouterForRoutes((route as APIDirectory).routes, route as APIDirectory, path, depth + 1);
                     // attach the router
                     router.use((route as APIDirectory).path, subRouter);
                     break;
