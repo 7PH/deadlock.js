@@ -2,8 +2,8 @@ import {RequestHandler, Request, Response} from "express";
 import {NextFunction} from "express-serve-static-core";
 
 /** The GateKeeper provides a simple way to mitigate http flood,
- *      by delaying requests so only one can be executing at a time.
- *  Using this middleware with nginx (for instance) to limit the number of simultaneous active TCP connections
+ *      by delaying requests so only one can be executed at a time.
+ *  Use this middleware with nginx (for instance) to limit the number of simultaneous active TCP connections
  *      in order to drop the unwanted traffic. */
 export class GateKeeper {
 
@@ -12,7 +12,12 @@ export class GateKeeper {
 
     /** Middleware to register in your API Description */
     public static middle: RequestHandler = function(req: Request, res: Response, next: NextFunction) {
-        const ip: string = req.connection.remoteAddress || '';
+        GateKeeper.delayRequest(req, res, next);
+    };
+
+    /** Limit the number of simultaneous active requests */
+    private static delayRequest(req: Request, res: Response, next: NextFunction) {
+        const identifier: string = req.connection.remoteAddress || '';
         let pending: Map<NextFunction, boolean>;
 
         function startRequest(n: NextFunction) {
@@ -21,9 +26,9 @@ export class GateKeeper {
         }
 
         // add the request to the list of pending requests
-        if (typeof GateKeeper.requests.get(ip) == 'undefined')
-            GateKeeper.requests.set(ip, new Map());
-        pending = GateKeeper.requests.get(ip) as Map<NextFunction, boolean>;
+        if (typeof GateKeeper.requests.get(identifier) === 'undefined')
+            GateKeeper.requests.set(identifier, new Map());
+        pending = GateKeeper.requests.get(identifier) as Map<NextFunction, boolean>;
         pending.set(next, false);
 
         // if no waiting request
@@ -35,7 +40,7 @@ export class GateKeeper {
             // remove the request from the list of pending requests
             pending.delete(next);
             // if no pending request, delete this ip queue
-            if (pending.size == 0) GateKeeper.requests.delete(ip);
+            if (pending.size == 0) GateKeeper.requests.delete(identifier);
             else {
                 // if there are requests waiting or executing, find one
                 let waiting: NextFunction[] = Array.from(pending.keys()).filter((n: NextFunction) => ! pending.get(n));
@@ -45,5 +50,5 @@ export class GateKeeper {
                 }
             }
         });
-    };
+    }
 }
