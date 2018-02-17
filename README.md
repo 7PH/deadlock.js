@@ -7,4 +7,5 @@ Still under development, not finished yet
 ### Features
 - [X] Full API specification in a single object
 - [X] Layer 7 DDoS mitigation (request delaying)
-- [ ] automatic HTML Documentation generation.
+- [ ] Clustering and cache-sharing (multi-core)
+- [ ] Automatic HTML Documentation generation
