@@ -1,5 +1,7 @@
 import {APIDescription, APIDirectory, APIEndPoint, APIRouteType} from "./api/APIDescription";
 import * as express from "express";
+import {NextFunction} from "express-serve-static-core";
+import {RequestHandler} from "express";
 
 
 /**
@@ -56,11 +58,23 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
                 case APIRouteType.ENDPOINT:
-                    console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
-                    router[(route as APIEndPoint).method]((route as APIEndPoint).path, (route as APIEndPoint).handler);
+                    //console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
+                    let handler: RequestHandler = DeadLockJS.bindHandler.bind(this, route as APIEndPoint);
+                    router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;
             }
         }
         return router;
+    }
+
+    /**
+     * Encapsulate every call on an API end-point
+     * @param {APIEndPoint} endPoint
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @param {NextFunction} next
+     */
+    private static bindHandler(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: NextFunction): void {
+        endPoint.handler(req, res, next);
     }
 }
