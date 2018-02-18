@@ -43,6 +43,7 @@ export class GateKeeper {
         }
 
         // when the request finishes
+        res.on('close', GateKeeper.onRequestFinished.bind(this, identifier, next));
         res.on('finish', GateKeeper.onRequestFinished.bind(this, identifier, next));
     }
 
