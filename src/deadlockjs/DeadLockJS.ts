@@ -1,20 +1,37 @@
-import {APIDescription, APIDirectory, APIEndPoint, APIRouteType} from "./api/APIDescription";
+import {APIDescription, APIDirectory, APIEndPoint, APIRouteType, MySQLDescription} from "./api/APIDescription";
 import * as express from "express";
 import {NextFunction} from "express-serve-static-core";
 import {RequestHandler} from "express";
-
+import * as mysql from "mysql";
+import {MysqlError, PoolConnection} from "mysql";
 
 /**
  * Main utilitary class
  */
 export class DeadLockJS {
 
+    /** MySQL pool */
+    private static mysqlPool: mysql.Pool;
+
+    /**
+     * Build a MySQL connection pool
+     * @param {MySQLDescription} mysqlDescription
+     */
+    private static buildMysqlPool(mysqlDescription: MySQLDescription) {
+        DeadLockJS.mysqlPool = mysql.createPool(mysqlDescription);
+    }
+
     /**
      * Build the router of an API Description
      * @param {APIDescription} api
      * @returns {e.Router}
      */
-    static buildRouter (api: APIDescription): express.Router {
+    public static buildRouter (api: APIDescription): express.Router {
+        if (api.db) {
+            if (api.db.mysql) {
+                DeadLockJS.buildMysqlPool(api.db.mysql);
+            }
+        }
         return DeadLockJS.buildRouterForRoutes([api.root], api.root, '', 0);
     }
 
@@ -23,9 +40,10 @@ export class DeadLockJS {
      * @param {Array<APIDirectory | APIEndPoint>} routes Routes to attach to the created router
      * @param {APIDirectory} parent Parent directory
      * @param {string} path Current path (for output)
+     * @param {number} depth Current depth of router
      * @returns {e.Router}
      */
-    static buildRouterForRoutes(routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
+    private static buildRouterForRoutes(routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
         const router: express.Router = express.Router();
 
@@ -75,6 +93,29 @@ export class DeadLockJS {
      * @param {NextFunction} next
      */
     private static bindHandler(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: NextFunction): void {
-        endPoint.handler(req, res, next);
+        if (endPoint.dbConnection) {
+            this.mysqlPool.getConnection((err: MysqlError, connection: PoolConnection) => {
+                if (err) {
+                    // could not get the mysql connection !?
+                    res.json({error: {message: 'Could not allocate MySQL connection', cause: err.toString()}});
+                } else {
+                    res.locals.mysql = connection;
+                    endPoint.handler(req, res, next);
+                }
+
+                if (connection) {
+                    res.on('close', () => {
+                        console.log("mysql ended");
+                        connection.release();
+                    });
+                    res.on('finish', () => {
+                        console.log("mysql ended");
+                        connection.release();
+                    });
+                }
+            });
+        } else {
+            endPoint.handler(req, res, next);
+        }
     }
 }

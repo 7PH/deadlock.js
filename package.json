@@ -1,6 +1,6 @@
 {
   "name": "deadlockjs",
-  "version": "1.1.10",
+  "version": "1.1.210",
   "description": "TypeScript library for Node.js/Express - API management with automatic documentation generation",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/7PH/DeadLockJS#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "@types/mysql": "^2.15.2",
+    "express": "^4.16.2",
+    "mysql": "^2.15.0"
   }
 }
