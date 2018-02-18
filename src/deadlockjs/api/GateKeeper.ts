@@ -11,44 +11,62 @@ export class GateKeeper {
     public static requests: Map<string, Map<NextFunction, boolean>> = new Map();
 
     /** Middleware to register in your API Description */
-    public static middle: RequestHandler = function(req: Request, res: Response, next: NextFunction) {
-        GateKeeper.delayRequest(req, res, next);
+    public static DoS: RequestHandler = function(req: Request, res: Response, next: NextFunction) {
+        GateKeeper.delayRequestByIp(req, res, next);
     };
 
-    /** Limit the number of simultaneous active requests */
-    private static delayRequest(req: Request, res: Response, next: NextFunction) {
-        const identifier: string = req.connection.remoteAddress || '';
-        let pending: Map<NextFunction, boolean>;
+    /** Delay a request by IP */
+    private static delayRequestByIp(req: Request, res: Response, next: NextFunction) {
+        const identifier: string = 'ip@' + req.connection.remoteAddress || 'null';
+        GateKeeper.delayRequest(identifier, res, next);
+    }
 
-        function startRequest(n: NextFunction) {
-            pending.set(n, true);
-            n();
-        }
+    /** Retrieve map of (NextFunction -> true|false) of pending requests */
+    private static getPendingRequests(identifier: string, createIfNull?: boolean): Map<NextFunction, boolean> {
+        if (createIfNull && typeof GateKeeper.requests.get(identifier) === 'undefined')
+            GateKeeper.requests.set(identifier, new Map());
+        return GateKeeper.requests.get(identifier) || new Map();
+    }
+
+    /** Limit the number of simultaneous active requests */
+    private static delayRequest(identifier: string, res: Response, next: NextFunction) {
+        const pending: Map<NextFunction, boolean> = GateKeeper.getPendingRequests(identifier, true);
 
         // add the request to the list of pending requests
-        if (typeof GateKeeper.requests.get(identifier) === 'undefined')
-            GateKeeper.requests.set(identifier, new Map());
-        pending = GateKeeper.requests.get(identifier) as Map<NextFunction, boolean>;
         pending.set(next, false);
 
         // if no waiting request
         if (pending.size <= 1)
-            startRequest(next);
+            GateKeeper.executeRequest(identifier, next);
+        else {
+            console.log("Delaying request (identifier=" + identifier +") - " + pending.size + " pending requests");
+        }
 
         // when the request finishes
-        res.on('finish', () => {
-            // remove the request from the list of pending requests
-            pending.delete(next);
-            // if no pending request, delete this ip queue
-            if (pending.size == 0) GateKeeper.requests.delete(identifier);
-            else {
-                // if there are requests waiting or executing, find one
-                let waiting: NextFunction[] = Array.from(pending.keys()).filter((n: NextFunction) => ! pending.get(n));
-                if (waiting.length > 0) {
-                    // there are at least one request waiting
-                    startRequest(waiting[0]);
-                }
+        res.on('finish', GateKeeper.onRequestFinished.bind(this, identifier, next));
+    }
+
+    /** Starts the execution of a request */
+    private static executeRequest(identifier: string, next: NextFunction) {
+        const pending: Map<NextFunction, boolean> = GateKeeper.getPendingRequests(identifier);
+        pending.set(next, true);
+        next();
+    }
+
+    /** When a request is done */
+    private static onRequestFinished(identifier: string, next: NextFunction) {
+        const pending: Map<NextFunction, boolean> = GateKeeper.getPendingRequests(identifier);
+        // remove the request from the list of pending requests
+        pending.delete(next);
+        // if no pending request, delete this ip queue
+        if (pending.size === 0) GateKeeper.requests.delete(identifier);
+        else {
+            // if there are requests waiting or executing, find one
+            let waiting: NextFunction[] = Array.from(pending.keys()).filter((n: NextFunction) => ! pending.get(n));
+            if (waiting.length > 0) {
+                // there are at least one request waiting
+                GateKeeper.executeRequest(identifier, waiting[0]);
             }
-        });
+        }
     }
 }
