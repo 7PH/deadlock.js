@@ -8,7 +8,13 @@ Still under development, not finished yet
 - [X] Full API specification in a single object
 - [X] Layer 7 DDoS mitigation (request delaying)
 - [X] MySQL pool management, dynamic release of connections
-- [ ] Request data validation
+- [X] Request body data validation with io-filter
+- [ ] Request caching
 - [ ] Access token creation and validation
-- [ ] Clustering with cache-sharing (multi-core)
+- [ ] Clustering
 - [ ] Automatic HTML Documentation generation
+
+### Dependencies
+This library uses io-filter to validate request body
+
+@SEE https://github.com/7PH/io-filter
