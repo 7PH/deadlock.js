@@ -12,6 +12,7 @@ Still under development, not finished yet
 - [ ] Request caching
 - [ ] Access token creation and validation
 - [ ] Clustering
+- [ ] Live statistics
 - [ ] Automatic HTML Documentation generation
 
 ### Dependencies
