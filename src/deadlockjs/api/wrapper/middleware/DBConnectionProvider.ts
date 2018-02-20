@@ -29,7 +29,7 @@ export class DBConnectionProvider implements IWrapperMiddleware {
                         }
                     });
                 } else {
-                    res.json({error: {message: 'Could not connect to the database'}});
+                    reject(new Error('Could not connect to the database'));
                 }
             } else {
                 resolve();
