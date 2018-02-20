@@ -1,20 +1,20 @@
 import {APIDescription, APIEndPoint} from "../../../";
 import * as express from "express";
-import {IWrapperMiddleware} from "./middleware/IWrapperMiddleware";
-import {RequestBodyChecker} from "./middleware/RequestBodyChecker";
-import {DBConnectionCleaner} from "./middleware/DBConnectionCleaner";
-import {DBConnectionProvider} from "./middleware/DBConnectionProvider";
+import {IWrapperMiddleware} from "./preprocessor/IWrapperMiddleware";
+import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
+import {DBConnectionCleaner} from "./preprocessor/DBConnectionCleaner";
+import {DBConnectionProvider} from "./preprocessor/DBConnectionProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
 
 export class RequestWrapper implements IRequestWrapper {
 
 
-    public readonly middlewares: Array<IWrapperMiddleware> = [];
+    public readonly preprocessors: Array<IWrapperMiddleware> = [];
 
     constructor(api: APIDescription) {
-        this.middlewares.push(new RequestBodyChecker());
-        this.middlewares.push(new DBConnectionProvider(api));
-        this.middlewares.push(new DBConnectionCleaner());
+        this.preprocessors.push(new RequestBodyChecker());
+        this.preprocessors.push(new DBConnectionProvider(api));
+        this.preprocessors.push(new DBConnectionCleaner());
     }
 
     /**
@@ -27,8 +27,8 @@ export class RequestWrapper implements IRequestWrapper {
      */
     public wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction): void {
         // building promises
-        const promises: Promise<void>[] = this.middlewares.map(
-            middleware => middleware.middleware(endPoint, req, res)
+        const promises: Promise<void>[] = this.preprocessors.map(
+            preprocessor => preprocessor.middleware(endPoint, req, res)
         );
 
         // waiting for promises

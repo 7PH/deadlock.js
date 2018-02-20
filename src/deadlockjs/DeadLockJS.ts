@@ -38,7 +38,7 @@ export class DeadLockJS {
         // builds the current directory router
         const router: express.Router = express.Router();
 
-        // attach the middleware(s)
+        // attach the preprocessor(s)
         if (parent.middleware != null && depth > 0)
             router.use(parent.middleware);
 
@@ -50,7 +50,7 @@ export class DeadLockJS {
 
                 /**
                  * A directory is a list of routes (which can be directory themselves or end point (get, post, .. handlers)
-                 *   One middleware or more can be attached to a directory
+                 *   One preprocessor or more can be attached to a directory
                  */
                 case APIRouteType.DIRECTORY:
                     // append current path to global path

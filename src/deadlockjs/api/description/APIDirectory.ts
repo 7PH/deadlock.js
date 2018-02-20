@@ -6,7 +6,7 @@ import {APIEndPoint} from "./APIEndPoint";
 export interface APIDirectory extends APIRoute {
     /** relative path to the sub-directory */
     path: string;
-    /** one middleware or more */
+    /** one preprocessor or more */
     middleware?: RequestHandler | RequestHandler[];
     /** routes (can be directory themselves ) */
     routes: Array<APIDirectory | APIEndPoint>;
