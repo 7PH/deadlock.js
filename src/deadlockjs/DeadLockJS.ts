@@ -1,7 +1,12 @@
-import {APIDescription, APIDirectory, APIEndPoint, APIRouteType} from "./api/APIDescription";
+import {APIDescription} from "./api/description/APIDescription";
 import * as express from "express";
 import {RequestHandler} from "express";
-import {MySQLRequestWrapper, RequestWrapper, SimpleRequestWrapper} from "./api/RequestWrapper";
+import {APIDirectory} from "./api/description/APIDirectory";
+import {APIEndPoint} from "./api/description/APIEndPoint";
+import {APIRouteType} from "./api/description/APIRouteType";
+import {RequestWrapper} from "./api/wrapper/RequestWrapper";
+import {MySQLRequestWrapper} from "./api/wrapper/MySQLRequestWrapper";
+import {SimpleRequestWrapper} from "./api/wrapper/SimpleRequestWrapper";
 
 /**
  * Main utilitary class

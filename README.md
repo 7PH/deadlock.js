@@ -6,10 +6,10 @@ Still under development, not finished yet
 
 ### Features
 - [X] Full API specification in a single object
-- [X] Layer 7 DDoS mitigation (request delaying)
+- [X] Layer 7 DDoS mitigation 1 (request delaying)
+- [ ] Layer 7 DDoS mitigation 2 (request caching)
 - [X] MySQL pool management, dynamic release of connections
 - [X] Request body data validation with io-filter
-- [ ] Request caching
 - [ ] Access token creation and validation
 - [ ] Clustering
 - [ ] Live statistics

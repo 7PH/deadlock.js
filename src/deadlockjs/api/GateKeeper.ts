@@ -16,7 +16,7 @@ export class GateKeeper {
     static get SIMULTANEOUS_REQUESTS_ALLOWED_COUNT() { return 2; }
 
     /** Currently actives (waiting or executing) requests per IP */
-    public static requests: Map<string, Map<NextFunction, RequestState>> = new Map();
+    protected static readonly requests: Map<string, Map<NextFunction, RequestState>> = new Map();
 
     /** Middleware to register in your API Description */
     public static DoS: RequestHandler = function(req: Request, res: Response, next: NextFunction) {

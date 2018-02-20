@@ -1,7 +1,14 @@
 
 
 export * from './deadlockjs/DeadLockJS';
-export * from './deadlockjs/api/APIDescription';
+export * from './deadlockjs/api/description/APIDescription';
+export * from './deadlockjs/api/description/APIDirectory';
+export * from './deadlockjs/api/description/APIEndPoint';
+export * from './deadlockjs/api/description/APIRoute';
+export * from './deadlockjs/api/description/APIRouteType';
+export * from './deadlockjs/api/description/MySQLDescription';
+export * from './deadlockjs/api/wrapper/MySQLRequestWrapper';
+export * from './deadlockjs/api/wrapper/RequestWrapper';
+export * from './deadlockjs/api/wrapper/SimpleRequestWrapper';
 export * from './deadlockjs/api/APIResponsePayload';
-export * from './deadlockjs/api/APIRequestPayload';
 export * from './deadlockjs/api/GateKeeper';
