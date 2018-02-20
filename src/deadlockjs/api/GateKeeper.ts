@@ -1,5 +1,6 @@
 import {RequestHandler, Request, Response} from "express";
 import {NextFunction} from "express-serve-static-core";
+import {IRequestWrapper} from "./wrapper/IRequestWrapper";
 
 
 export enum RequestState {DELAYED, EXECUTING, ABORTED}
@@ -8,6 +9,7 @@ export enum RequestState {DELAYED, EXECUTING, ABORTED}
  *      by delaying requests so only one can be executed at a time.
  *  Use this middleware with nginx (for instance) to limit the number of simultaneous active TCP connections
  *      in order to drop the unwanted traffic.
+ *  @TODO Refactor - should be a wrapper middleware
  */
 export class GateKeeper {
 

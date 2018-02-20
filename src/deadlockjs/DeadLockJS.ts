@@ -5,16 +5,11 @@ import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
 import {RequestWrapper} from "./api/wrapper/RequestWrapper";
-import {DefaultRequestWrapper} from "./api/wrapper/DefaultRequestWrapper";
 
 /**
  * Main utilitary class
  */
 export class DeadLockJS {
-
-    public static getStats(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        res.json({"stats": []});
-    }
 
     /**
      * Build the router of an API Description
@@ -23,7 +18,7 @@ export class DeadLockJS {
      */
     public static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
-            new DefaultRequestWrapper(api),
+            new RequestWrapper(api),
             [api.root],
             api.root,
             '',
