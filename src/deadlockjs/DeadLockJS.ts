@@ -5,28 +5,15 @@ import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
 import {RequestWrapper} from "./api/wrapper/RequestWrapper";
-import {MySQLRequestWrapper} from "./api/wrapper/MySQLRequestWrapper";
-import {SimpleRequestWrapper} from "./api/wrapper/SimpleRequestWrapper";
+import {DefaultRequestWrapper} from "./api/wrapper/DefaultRequestWrapper";
 
 /**
  * Main utilitary class
  */
 export class DeadLockJS {
 
-    /**
-     * Get an instance of RequestWrapper
-     * @param {APIDescription} api
-     * @returns {RequestWrapper}
-     */
-    private static getRequestWrapper(api: APIDescription): RequestWrapper {
-        let requestWrapper: RequestWrapper | undefined = undefined;
-
-        if (api.db) {
-            if (api.db.mysql)
-                requestWrapper = new MySQLRequestWrapper(api.db.mysql);
-        }
-
-        return requestWrapper || new SimpleRequestWrapper();
+    public static getStats(req: express.Request, res: express.Response, next: express.NextFunction): void {
+        res.json({"stats": []});
     }
 
     /**
@@ -36,7 +23,7 @@ export class DeadLockJS {
      */
     public static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
-            this.getRequestWrapper(api),
+            new DefaultRequestWrapper(api),
             [api.root],
             api.root,
             '',
@@ -86,7 +73,7 @@ export class DeadLockJS {
                  */
                 case APIRouteType.ENDPOINT:
                     //console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
-                    let handler: RequestHandler = wrapper.bindHandler.bind(wrapper, route as APIEndPoint);
+                    let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;
             }

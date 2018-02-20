@@ -6,7 +6,7 @@ import {APIEndPoint} from "../description/APIEndPoint";
  * It provides basic tools (allocation of a MySQL connection, parameters validation, request caching..
  */
 export interface RequestWrapper {
-    bindHandler(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction): void;
+    wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction): void;
 }
 
 
