@@ -2,6 +2,7 @@ import {RequestHandler} from "express";
 import * as iof from "io-filter";
 import * as express from "express";
 import {APIRoute} from "./APIRoute";
+import {RateLimiterConfigOverride} from "../wrapper/preprocessor/RateLimiter";
 
 /** An API end-point is an application entry point */
 export interface APIEndPoint extends APIRoute {
@@ -24,6 +25,9 @@ export interface APIEndPoint extends APIRoute {
         /** expire time */
         timeout: number;
     };
+
+    /** ddos protection configuration override */
+    rateLimit?: RateLimiterConfigOverride;
 
     /** wether this end-point needs database allocation (an instance of mysql) */
     dbConnection: boolean;
