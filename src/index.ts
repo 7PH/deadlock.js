@@ -9,4 +9,3 @@ export * from './deadlockjs/api/description/APIRouteType';
 export * from './deadlockjs/api/description/MySQLDescription';
 export * from './deadlockjs/api/wrapper/RequestWrapper';
 export * from './deadlockjs/api/wrapper/IRequestWrapper';
-export * from './deadlockjs/api/middleware/GateKeeper';
