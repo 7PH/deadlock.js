@@ -6,10 +6,10 @@ Still under development, not finished yet
 
 ### Features
 - [X] Full API specification in a single object
-- [X] Layer 7 DDoS mitigation (request delaying)
-- [ ] Request caching
+- [X] Layer 7 DDoS mitigation (delay and drop)
+- [X] ~~Request caching~~ Made into another library: PromiseCaching
 - [X] MySQL pool management, dynamic release of connections
-- [X] Request body data validation with io-filter
+- [X] Request body validation and filtering
 - [ ] Access token creation and validation
 - [ ] Clustering
 - [ ] Live statistics
@@ -19,3 +19,8 @@ Still under development, not finished yet
 This library uses io-filter to validate request body
 
 @SEE https://github.com/7PH/io-filter
+
+### See also
+I made another library to handle caching promises
+
+@SEE https://github.com/7PH/Promise-Caching
