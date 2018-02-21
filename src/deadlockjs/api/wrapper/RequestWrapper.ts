@@ -1,20 +1,62 @@
 import {APIDescription, APIEndPoint} from "../../../";
 import * as express from "express";
-import {IWrapperMiddleware} from "./preprocessor/IWrapperMiddleware";
+import {IPreprocessor} from "./preprocessor/IPreprocessor";
 import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
 import {DBConnectionCleaner} from "./preprocessor/DBConnectionCleaner";
 import {DBConnectionProvider} from "./preprocessor/DBConnectionProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
+import {RateLimiter} from "./preprocessor/RateLimiter";
 
 export class RequestWrapper implements IRequestWrapper {
 
+    /**
+     * Preprocess to do. List of list
+     * There will be executed as a series of parallel promises.
+     *   example:
+     *      p = [[a, b], [c, d]]
+     *          a, b will be executed in parallel.
+     *          THEN, if all resolves, c and d will be executed in parallel
+     * @type {Array<Array<IPreprocessor>>}
+     */
+    public readonly preprocessors: Array<Array<IPreprocessor>> = [];
 
-    public readonly preprocessors: Array<IWrapperMiddleware> = [];
-
+    /**
+     * @param {APIDescription} api
+     */
     constructor(api: APIDescription) {
-        this.preprocessors.push(new RequestBodyChecker());
-        this.preprocessors.push(new DBConnectionProvider(api));
-        this.preprocessors.push(new DBConnectionCleaner());
+        this.preprocessors = [
+            [
+                new RateLimiter(api),
+                new RequestBodyChecker(),
+                new DBConnectionCleaner(),
+            ],
+            [
+                new DBConnectionProvider(api),
+            ]
+        ];
+    }
+
+    /**
+     *
+     * @param {(() => Promise<any>)[][]} jobs
+     * @returns {Promise<any>}
+     */
+    private chainParallelPromises(jobs: (() => Promise<any>)[][]): Promise<any> {
+        // no job to do
+        if (jobs.length == 0) return Promise.resolve();
+
+        // build promise list of parallel tasks to do
+        const promises: (() => Promise<any>)[] = jobs.map(job => {
+            return () => Promise.all(
+                job.map(fun => fun())
+            );
+        });
+
+        const first: () => Promise<any> = promises.shift() as (() => Promise<any>);
+
+        return promises.reduce((promiseChain, currentTask) => {
+            return promiseChain.then(currentTask);
+        }, first());
     }
 
     /**
@@ -26,13 +68,18 @@ export class RequestWrapper implements IRequestWrapper {
      * @TODO Refactor
      */
     public wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction): void {
-        // building promises
-        const promises: Promise<void>[] = this.preprocessors.map(
-            preprocessor => preprocessor.middleware(endPoint, req, res)
+
+        // building promises of promises
+        const promises: (() => Promise<any>)[][] = this.preprocessors.map(
+            preprocessors => {
+                return preprocessors.map(
+                    preprocessor => preprocessor.preprocess.bind(preprocessor, endPoint, req, res)
+                );
+            }
         );
 
-        // waiting for promises
-        Promise.all(promises)
+        // getting main promise
+        this.chainParallelPromises(promises)
             .then(() => {
                 endPoint.handler(req, res, next);
             }).catch((reason: Error) => {
