@@ -1,10 +1,10 @@
-import {IWrapperMiddleware} from "./IWrapperMiddleware";
+import {IPreprocessor} from "./IPreprocessor";
 import {APIDescription, APIEndPoint} from "../../../../index";
 import * as mysql from "mysql";
 import * as express from "express";
 
 
-export class DBConnectionProvider implements IWrapperMiddleware {
+export class DBConnectionProvider implements IPreprocessor {
 
     private readonly mysqlPool: mysql.Pool;
 
@@ -16,13 +16,13 @@ export class DBConnectionProvider implements IWrapperMiddleware {
         }
     }
 
-    middleware (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (endPoint.dbConnection) {
                 if (this.mysqlPool != null) {
                     this.mysqlPool.getConnection((err: mysql.MysqlError, connection: mysql.PoolConnection) => {
                         if (err) {
-                            reject(new Error('Could not allocate MySQL connection'));
+                            reject(new Error('Could not allocate MySQL connection: ' + err.message));
                         } else {
                             res.locals.mysql = connection;
                             resolve();

@@ -1,10 +1,10 @@
-import {IWrapperMiddleware} from "./IWrapperMiddleware";
+import {IPreprocessor} from "./IPreprocessor";
 import {APIEndPoint} from "../../../../";
 import * as express from "express";
 import * as mysql from "mysql";
 
-export class DBConnectionCleaner implements IWrapperMiddleware {
-    middleware(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+export class DBConnectionCleaner implements IPreprocessor {
+    public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve) => {
             if (endPoint.dbConnection) {
                 res.on('close', this.closeMySQLConnection.bind(this, res));
