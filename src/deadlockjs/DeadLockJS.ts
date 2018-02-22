@@ -5,18 +5,80 @@ import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
 import {RequestWrapper} from "./api/wrapper/RequestWrapper";
+import * as path from "path";
+import * as bodyParser from "body-parser";
+import * as http from "http";
+import * as cluster from "cluster";
 
 /**
- * Main utilitary class
+ * Main utility class
  */
 export class DeadLockJS {
+
+    /**
+     * Build and start an express app with a specified api description
+     * @param {APIDescription} api
+     */
+    public static startApp(api: APIDescription): void {
+
+        if (cluster.isMaster) {
+            for (let i = 0; i < api.workers; i ++) {
+                cluster.fork();
+            }
+        } else {
+            http.createServer(DeadLockJS.getApp(api)).listen(api.port);
+        }
+    }
+
+    /**
+     * Build the express app matching the provided api description
+     * @param {APIDescription} api
+     * @returns {e.Application}
+     */
+    private static getApp(api: APIDescription): express.Application {
+        const app = express();
+
+        // view engine setup
+
+        // uncomment after placing your favicon in /public
+        //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+        //app.use(logger('dev'));
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: false }));
+        //app.use(cookieParser());
+        app.use(express.static(path.join(__dirname, 'public')));
+
+        // attach the API here
+        app.use('/', DeadLockJS.buildRouter(api));
+
+
+        // catch 404 and forward to error handler
+        app.use(function(req: any, res: any, next: any) {
+            const err: any = new Error('Not Found');
+            err.status = 404;
+            next(err);
+        });
+
+
+        // error handler
+        app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+            // set locals, only providing error in development
+            res.locals.message = err.message;
+            res.locals.error = req.app.get('env') === 'development' ? err : {};
+            // render the error page
+            res.status(err.status || 500);
+            res.json({error: {message: "404 Not Found"}});
+        });
+
+        return app;
+    }
 
     /**
      * Build the router of an API Description
      * @param {APIDescription} api
      * @returns {e.Router}
      */
-    public static buildRouter (api: APIDescription): express.Router {
+    private static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
             new RequestWrapper(api),
             [api.root],
@@ -66,8 +128,8 @@ export class DeadLockJS {
                 /**
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
-                case APIRouteType.ENDPOINT:
-                    //console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
+                case APIRouteType.END_POINT:
+                    console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
                     let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;

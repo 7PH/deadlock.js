@@ -8,9 +8,12 @@ export class DBConnectionProvider implements IPreprocessor {
 
     private readonly mysqlPool: mysql.Pool;
 
+    private readonly activated: boolean = false;
+
     constructor(api: APIDescription) {
         if (api.db) {
             if (api.db.mysql) {
+                this.activated = true;
                 this.mysqlPool = mysql.createPool(api.db.mysql);
             }
         }
@@ -18,13 +21,13 @@ export class DBConnectionProvider implements IPreprocessor {
 
     public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (endPoint.dbConnection) {
+            if (this.activated && endPoint.dbConnection) {
                 if (this.mysqlPool != null) {
                     this.mysqlPool.getConnection((err: mysql.MysqlError, connection: mysql.PoolConnection) => {
                         if (err) {
-                            reject(new Error('Could not allocate MySQL connection: ' + err.message));
+                            reject(new Error('Could not allocate MySQL connection'));
                         } else {
-                            res.locals.mysql = connection;
+                            res.locals.dl.mysql = connection;
                             resolve();
                         }
                     });

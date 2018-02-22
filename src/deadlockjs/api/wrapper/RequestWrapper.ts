@@ -6,6 +6,7 @@ import {DBConnectionCleaner} from "./preprocessor/DBConnectionCleaner";
 import {DBConnectionProvider} from "./preprocessor/DBConnectionProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
 import {RateLimiter} from "./preprocessor/RateLimiter";
+import {RequestInitializer} from "./preprocessor/RequestInitializer";
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -25,6 +26,9 @@ export class RequestWrapper implements IRequestWrapper {
      */
     constructor(api: APIDescription) {
         this.preprocessors = [
+            [
+                new RequestInitializer()
+            ],
             [
                 new RateLimiter(api),
                 new RequestBodyChecker(),
@@ -80,10 +84,17 @@ export class RequestWrapper implements IRequestWrapper {
 
         // getting main promise
         this.chainParallelPromises(promises)
-            .then(() => {
-                endPoint.handler(req, res, next);
-            }).catch((reason: Error) => {
+            .then(this.execute.bind(this, endPoint, req, res))
+            .catch((reason: Error) => {
                 res.json({error: {message: "Request wrapper error: " + reason.message}});
             });
+    }
+
+    private execute(endPoint: APIEndPoint, req: express.Request, res: express.Response): void {
+        try {
+            endPoint.handler(req, res);
+        } catch (e) {
+            res.json({error: {message: "An error occurred"}});
+        }
     }
 }

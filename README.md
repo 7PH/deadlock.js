@@ -139,6 +139,8 @@ Therefore, I would strongly suggest to make controller handlers into separate fi
 
 Keep in mind that each worker will allocate a MySQL Pool with 'connectionLimit' connections.
 
+Also, the appSecret has no use at the moment but it will be used later to handle interactions with the web server, such as retrieving logs, statistics, editing configuration.
+
 ## See also
 
 I made another library to handle caching promises

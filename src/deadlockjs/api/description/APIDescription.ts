@@ -1,4 +1,4 @@
-import {MySQLDescription} from "./MySQLDescription";
+import {MySQLConfig} from "./MySQLConfig";
 import {APIDirectory} from "./APIDirectory";
 import {RateLimiterConfig} from "../wrapper/preprocessor/RateLimiter";
 
@@ -9,15 +9,18 @@ export interface APIDescription {
     /** app secret */
     appSecret: string;
 
-    /** hostname of the API */
-    hostname: string;
+    /** amount of workers */
+    workers: number;
+
+    /** favicon */
+    favicon?: string;
 
     /** port */
     port: number;
 
     /** database */
     db?: {
-        mysql?: MySQLDescription;
+        mysql?: MySQLConfig;
     };
 
     /** DDoS */

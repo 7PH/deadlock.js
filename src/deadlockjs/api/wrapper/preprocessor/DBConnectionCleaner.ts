@@ -19,7 +19,7 @@ export class DBConnectionCleaner implements IPreprocessor {
      * @param {express.Response} res
      */
     private closeMySQLConnection(res: express.Response): void {
-        const connection: mysql.PoolConnection | undefined = res.locals.mysql;
+        const connection: mysql.PoolConnection | undefined = res.locals.dl.mysql;
         if (connection)
             connection.release();
     }

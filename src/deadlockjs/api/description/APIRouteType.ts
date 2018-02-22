@@ -1,3 +1,3 @@
 
 /** API route type */
-export enum APIRouteType {ENDPOINT='ENDPOINT', DIRECTORY='DIRECTORY'}
+export enum APIRouteType {DIRECTORY='DIRECTORY', END_POINT='ENDPOINT'}

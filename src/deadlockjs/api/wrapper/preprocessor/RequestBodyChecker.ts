@@ -8,12 +8,13 @@ export class RequestBodyChecker implements IPreprocessor {
             if (endPoint.paramFilter) {
                 const filtered: any = endPoint.paramFilter.mask(req.body);
                 if (typeof filtered !== 'undefined') {
-                    res.locals.params = filtered;
+                    res.locals.dl.params = filtered;
                     resolve();
                 } else {
                     reject(new Error("Error parsing parameters. Some are missing or invalid!"));
                 }
             } else {
+                res.locals.dl.params = {};
                 resolve();
             }
         });
