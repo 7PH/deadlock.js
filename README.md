@@ -1,6 +1,6 @@
 # DeadLockJS
 
-TypeScript lightweight library for Node.js/Express - API management with automatic documentation generation
+TypeScript lightweight library for Node.js/Express. Minimalist
 
 Still under development, not finished yet
 
@@ -18,14 +18,22 @@ npm i --save deadlockjs
 
 
 ## Features
+
+All these features are optional. See examples below 
 - [X] Full API specification in a single object
 - [X] Layer 7 DDoS mitigation (delay and drop)
 - [X] ~~Request caching~~ Made into another library: Promise-Caching
 - [X] MySQL pool management, dynamic release of connections
 - [X] Request body validation and filtering
 - [X] Clustering
-- [ ] Live statistics
-- [ ] Automatic HTML Documentation generation
+- [ ] IP Blacklist/Whitelist
+- [ ] MongoDB support
+- [ ] Logs
+- [ ] Internal statistics
+- [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
+
+## Known issues
+- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could sent 4 requests per second (each on one distinct worker)
 
 ## Dependencies
 This library uses io-filter to validate request body
@@ -114,7 +122,11 @@ const api: APIDescription = {
                     password: new ValueTypeFilter('string')
                 }),
                 dbConnection: true,
-                handler: (req: express.Request, res: express.Response) => { res.json({hello: "world"}); }
+                handler: (req: express.Request, res: express.Response) => {
+                    // res.locals.dl.mysql -> MySQL Pool Connection
+                    // res.locals.dl.params -> {pseudo: string, password: string}
+                    res.json({hello: "world"});
+                }
             }
         ]
     }
@@ -125,7 +137,10 @@ DeadLockJS.startApp(api);
 
 Therefore, I would strongly suggest to make controller handlers into separate files.
 
+Keep in mind that each worker will allocate a MySQL Pool with 'connectionLimit' connections.
+
 ## See also
+
 I made another library to handle caching promises
 
 @SEE https://github.com/7PH/Promise-Caching
