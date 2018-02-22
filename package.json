@@ -1,7 +1,7 @@
 {
   "name": "deadlockjs",
-  "version": "1.2.146",
-  "description": "TypeScript library for Node.js/Express - API management with automatic documentation generation",
+  "version": "1.2.150",
+  "description": "Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

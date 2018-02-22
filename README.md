@@ -1,6 +1,7 @@
 # DeadLockJS
 
-TypeScript lightweight library for Node.js/Express. Minimalist
+Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.
+
 
 Still under development, not finished yet
 
@@ -33,7 +34,7 @@ All these features are optional. See examples below
 - [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
 
 ## Known issues
-- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could sent 4 requests per second (each on one distinct worker)
+- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could sent 4 requests per second (each on a distinct worker)
 
 ## Dependencies
 This library uses io-filter to validate request body
@@ -51,7 +52,7 @@ import {APIDescription, APIRouteType, DeadLockJS} from "deadlockjs";
 import * as express from 'express';
 
 const api: APIDescription = {
-    appSecret: '1f4600bc0380273f90ed02db217cfbf',
+    appSecret: '',
     workers: 4,
     port: 3000,
     root: {
@@ -83,7 +84,7 @@ import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
 import * as express from 'express';
 
 const api: APIDescription = {
-    appSecret: '1f4600bc0380273f90ed02db217cfbf',
+    appSecret: '',
     workers: 4,
     port: 3000,
     db: {
@@ -139,7 +140,7 @@ Therefore, I would strongly suggest to make controller handlers into separate fi
 
 Keep in mind that each worker will allocate a MySQL Pool with 'connectionLimit' connections.
 
-Also, the appSecret has no use at the moment but it will be used later to handle interactions with the web server, such as retrieving logs, statistics, editing configuration.
+Also, the appSecret has no use at the moment but it will be used later to handle interactions with the web server, such as retrieving logs, statistics, editing configuration. There will be a cooldown for appSecret authentication, but you should use a secure one.
 
 ## See also
 
