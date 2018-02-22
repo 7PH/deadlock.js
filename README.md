@@ -53,7 +53,7 @@ That's all you need to get your web server up and running!
 
 ### More complex example
 
-Here is an example of a web app with rate limit, mysql connection, and request body validation
+Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
 ```typescript
 const api: APIDescription = {
