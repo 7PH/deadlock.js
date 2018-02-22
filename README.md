@@ -4,13 +4,26 @@ TypeScript lightweight library for Node.js/Express - API management with automat
 
 Still under development, not finished yet
 
+
+## Install
+
+The easiest way to install deadlockjs is with [`npm`][npm].
+
+[npm]: https://www.npmjs.com/
+
+```sh
+npm i --save deadlockjs
+```
+
+
+
 ## Features
 - [X] Full API specification in a single object
 - [X] Layer 7 DDoS mitigation (delay and drop)
-- [X] ~~Request caching~~ Made into another library: PromiseCaching
+- [X] ~~Request caching~~ Made into another library: Promise-Caching
 - [X] MySQL pool management, dynamic release of connections
 - [X] Request body validation and filtering
-- [ ] Clustering
+- [X] Clustering
 - [ ] Live statistics
 - [ ] Automatic HTML Documentation generation
 
@@ -23,7 +36,7 @@ This library uses io-filter to validate request body
 
 ### Hello World
 
-Here is a simple working example, without database connection and ddos protection:
+Here is a simple working example, without database connection and rate limit:
 ```typescript
 
 import {APIDescription, APIRouteType, DeadLockJS} from "deadlockjs";
@@ -31,6 +44,7 @@ import * as express from 'express';
 
 const api: APIDescription = {
     appSecret: '1f4600bc0380273f90ed02db217cfbf',
+    workers: 4,
     port: 3000,
     root: {
         kind: APIRouteType.DIRECTORY,
@@ -51,13 +65,18 @@ DeadLockJS.startApp(api);
 
 That's all you need to get your web server up and running! 
 
-### More complex example
+### Complex example
 
 Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
 ```typescript
+import {APIDescription, APIRouteType, DeadLockJS} from "deadlockjs";
+import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
+import * as express from 'express';
+
 const api: APIDescription = {
     appSecret: '1f4600bc0380273f90ed02db217cfbf',
+    workers: 4,
     port: 3000,
     db: {
         mysql: {
@@ -79,10 +98,8 @@ const api: APIDescription = {
         path: '/api/v1',
         middleware: (req: express.Request, res: express.Response, next: express.NextFunction) => {
             if (Math.random() < 0.5) {
-                // you pass
                 next();
             } else {
-                // you don't
                 res.json({message: "nope"});
             }
         },
@@ -92,7 +109,7 @@ const api: APIDescription = {
                 path: '/login',
                 method: 'post',
                 rateLimit: {weight: 80},
-                paramFilter: new iof.ObjectFilter({
+                paramFilter: new ObjectFilter({
                     pseudo: new RegExpFilter(/^[a-zA-Z0-9]{3,20}$/),
                     password: new ValueTypeFilter('string')
                 }),
@@ -106,6 +123,7 @@ const api: APIDescription = {
 DeadLockJS.startApp(api);
 ```
 
+Therefore, I would strongly suggest to make controller handlers into separate files.
 
 ## See also
 I made another library to handle caching promises
