@@ -36,7 +36,7 @@ All these features are optional. See examples below
 - [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
 
 ## Known issues
-- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could sent 4 requests per second (each on a distinct worker)
+- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could send 4 requests per second (each on a distinct worker)
 
 ## Dependencies
 This library uses io-filter to validate request body
