@@ -8,6 +8,13 @@ const api: APIDescription = {
     appSecret: '1f4600bc0380273f90ed02db217cfbf',
     workers: 2,
     port: 3000,
+    ipBlacklist: [],
+    rateLimit: {
+        ipWhitelist: ['::1'],
+        weight: 1,
+        maxPending: 0,
+        maxWeightPerSec: 1
+    },
     root: {
         kind: APIRouteType.DIRECTORY,
         path: '/api/v1',
