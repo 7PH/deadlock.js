@@ -23,11 +23,12 @@ npm i --save deadlockjs
 All these features are optional. See examples below 
 - [X] Full API specification in a single object
 - [X] Layer 7 DDoS mitigation (delay and drop)
+- [X] IP Whitelist for rate limit
 - [X] ~~Request caching~~ Made into another library: Promise-Caching
 - [X] MySQL pool management, dynamic release of connections
 - [X] Request body validation and filtering
 - [X] Clustering
-- [ ] IP Blacklist/Whitelist
+- [X] IP Blacklist
 - [ ] MongoDB support
 - [ ] HTTP2 Support
 - [ ] TLS Support
