@@ -66,7 +66,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
-                handler: (req: express.Request, res: express.Response) => { res.json({hello: "world"}); }
+                handler: async (req: express.Request, res: express.Response) => { return {a: Math.random()}; }
             }
         ]
     }
@@ -107,6 +107,11 @@ const api: APIDescription = {
         maxPending: 0,
         maxWeightPerSec: 100
     },
+    /** if you don't define a global 'cache' property, cache system won't be activated */
+    cache: {
+        /** default expire time */
+        expire: 1000
+    },
     root: {
         kind: APIRouteType.DIRECTORY,
         path: '/api/v1',
@@ -128,10 +133,14 @@ const api: APIDescription = {
                     password: new ValueTypeFilter('string')
                 }),
                 dbConnection: true,
-                handler: (req: express.Request, res: express.Response) => {
+                cache: {
+                    /** expire time in milliseconds: override defaut configuration */
+                    expire: 1000
+                },
+                handler: async (req: express.Request, res: express.Response) => {
                     // res.locals.dl.mysql -> MySQL Pool Connection
                     // res.locals.dl.params -> {pseudo: string, password: string}
-                    res.json({hello: "world"});
+                    return {a: Math.random()};
                 }
             }
         ]
