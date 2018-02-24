@@ -12,6 +12,9 @@ export interface APIDescription {
     /** amount of workers */
     workers: number;
 
+    /** ip blacklist */
+    ipBlacklist?: Array<string>;
+
     /** favicon */
     favicon?: string;
 

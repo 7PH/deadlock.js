@@ -9,6 +9,7 @@ import Timer = NodeJS.Timer;
  * Configuration object
  */
 export interface RateLimiterConfig {
+    ipWhitelist: Array<string>;
     maxWeightPerSec: number;
     maxPending: number;
     weight: number;
@@ -32,6 +33,7 @@ export class RateLimiter implements IPreprocessor {
      * @type {{defaultAction: RateLimiterAction; weight: number; maxWeightPerSec: number}}
      */
     public static readonly DEFAULT_CONFIG: RateLimiterConfig = {
+        ipWhitelist: [],
         weight: 4,
         maxWeightPerSec: 1,
         maxPending: 1
@@ -81,7 +83,7 @@ export class RateLimiter implements IPreprocessor {
      * @param {e.Request} req
      */
     private getClientData(req: express.Request): {weight: number, pending: number} {
-        const ip: string = req.connection.remoteAddress || '';
+        const ip: string = req.connection.remoteAddress || '127.0.0.1';
         let data: {weight: number, pending: number} | undefined = this.clients.get(ip);
         if (data == null) {
             data = {weight: 0, pending: 0};
@@ -100,7 +102,8 @@ export class RateLimiter implements IPreprocessor {
     public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (! this.activated) return resolve();
-            if (endPoint.rateLimit != null && endPoint.rateLimit.enabled == false) resolve();
+            if (endPoint.rateLimit != null && endPoint.rateLimit.enabled == false) return resolve();
+            if (this.config.ipWhitelist.indexOf(req.connection.remoteAddress || '127.0.0.1') != -1) return resolve();
 
             // merge configurations
             let config: any = this.config;

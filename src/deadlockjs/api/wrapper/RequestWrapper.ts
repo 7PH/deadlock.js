@@ -7,6 +7,7 @@ import {DBConnectionProvider} from "./preprocessor/DBConnectionProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
 import {RateLimiter} from "./preprocessor/RateLimiter";
 import {RequestInitializer} from "./preprocessor/RequestInitializer";
+import {GateKeeper} from "./preprocessor/GateKeeper";
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -30,6 +31,7 @@ export class RequestWrapper implements IRequestWrapper {
                 new RequestInitializer()
             ],
             [
+                new GateKeeper(api),
                 new RateLimiter(api),
                 new RequestBodyChecker(),
                 new DBConnectionCleaner(),
