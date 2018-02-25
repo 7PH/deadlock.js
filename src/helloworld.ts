@@ -10,10 +10,13 @@ const api: APIDescription = {
     port: 3000,
     ipBlacklist: [],
     rateLimit: {
-        ipWhitelist: ['::1'],
+        ipWhitelist: [],
         weight: 1,
         maxPending: 0,
         maxWeightPerSec: 1
+    },
+    cache: {
+        expire: 2000
     },
     root: {
         kind: APIRouteType.DIRECTORY,
@@ -23,7 +26,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
-                handler: (req: express.Request, res: express.Response) => { res.json({hello: "world"}); }
+                handler: async (req: express.Request, res: express.Response) => { return Promise.reject(new Error("issou")); }
             }
         ]
     }
