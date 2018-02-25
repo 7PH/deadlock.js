@@ -2,8 +2,8 @@ import {APIDescription, APIEndPoint} from "../../../";
 import * as express from "express";
 import {IPreprocessor} from "./preprocessor/IPreprocessor";
 import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
-import {DBConnectionCleaner} from "./preprocessor/DBConnectionCleaner";
-import {DBConnectionProvider} from "./preprocessor/DBConnectionProvider";
+import {MySQLCleaner} from "./preprocessor/MySQLCleaner";
+import {MySQLProvider} from "./preprocessor/MySQLProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
 import {RateLimiter} from "./preprocessor/RateLimiter";
 import {RequestInitializer} from "./preprocessor/RequestInitializer";
@@ -35,10 +35,10 @@ export class RequestWrapper implements IRequestWrapper {
                 new GateKeeper(api),
                 new RateLimiter(api),
                 new RequestBodyChecker(),
-                new DBConnectionCleaner(),
+                new MySQLCleaner(),
             ],
             [
-                new DBConnectionProvider(api),
+                new MySQLProvider(api),
             ]
         ];
     }

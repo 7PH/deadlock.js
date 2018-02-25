@@ -28,6 +28,7 @@
     "@types/mysql": "^2.15.2",
     "express": "^4.16.2",
     "io-filter": "^2.0.1",
+    "mongodb": "^3.0.3",
     "mysql": "^2.15.0",
     "promise-caching": "0.0.5"
   }

@@ -3,7 +3,7 @@ import {APIEndPoint} from "../../../../";
 import * as express from "express";
 import * as mysql from "mysql";
 
-export class DBConnectionCleaner implements IPreprocessor {
+export class MySQLCleaner implements IPreprocessor {
     public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve) => {
             if (endPoint.dbConnection) {

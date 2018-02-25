@@ -11,8 +11,8 @@ export * from './deadlockjs/api/description/MySQLConfig';
 
 export * from './deadlockjs/api/wrapper/local/RequestLocal';
 
-export * from './deadlockjs/api/wrapper/preprocessor/DBConnectionCleaner';
-export * from './deadlockjs/api/wrapper/preprocessor/DBConnectionProvider';
+export * from './deadlockjs/api/wrapper/preprocessor/MySQLCleaner';
+export * from './deadlockjs/api/wrapper/preprocessor/MySQLProvider';
 export * from './deadlockjs/api/wrapper/preprocessor/IPreprocessor';
 export * from './deadlockjs/api/wrapper/preprocessor/RateLimiter';
 export * from './deadlockjs/api/wrapper/preprocessor/RequestBodyChecker';

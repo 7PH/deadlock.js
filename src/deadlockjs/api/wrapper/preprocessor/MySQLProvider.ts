@@ -4,7 +4,7 @@ import * as mysql from "mysql";
 import * as express from "express";
 
 
-export class DBConnectionProvider implements IPreprocessor {
+export class MySQLProvider implements IPreprocessor {
 
     private readonly mysqlPool: mysql.Pool;
 
