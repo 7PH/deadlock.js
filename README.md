@@ -39,6 +39,7 @@ All these features are optional. See examples below
 ## Known issues
 - [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could send 4 requests per second (each on a distinct worker)
 
+
 ## Dependencies
 This library uses io-filter to validate request body
 
@@ -110,7 +111,7 @@ const api: APIDescription = {
     /** if you don't define a global 'cache' property, cache system won't be activated */
     cache: {
         /** default expire time */
-        expire: 1000
+        expire: 2000
     },
     root: {
         kind: APIRouteType.DIRECTORY,
