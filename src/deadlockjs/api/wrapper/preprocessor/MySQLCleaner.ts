@@ -1,7 +1,7 @@
 import {IPreprocessor} from "./IPreprocessor";
 import {APIEndPoint} from "../../../../";
 import * as express from "express";
-import * as mysql from "promise-mysql";
+import * as mysql from "mysql";
 
 export class MySQLCleaner implements IPreprocessor {
     public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {

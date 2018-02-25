@@ -1,8 +1,7 @@
 import {IPreprocessor} from "./IPreprocessor";
 import {APIDescription, APIEndPoint} from "../../../../index";
-import * as mysql from "promise-mysql";
+import * as mysql from "mysql";
 import * as express from "express";
-import {PoolConnection} from "promise-mysql";
 
 
 export class MySQLProvider implements IPreprocessor {
@@ -21,17 +20,23 @@ export class MySQLProvider implements IPreprocessor {
     }
 
     public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
-        if (this.activated && endPoint.dbConnection) {
-            if (this.mysqlPool != null) {
-                try {
-                    res.locals.dl.mysql = await this.mysqlPool.getConnection();
-                } catch (e) {
-                    throw new Error('Could not allocate MySQL connection');
+        return new Promise<void>((resolve, reject) => {
+            if (this.activated && endPoint.dbConnection) {
+                if (this.mysqlPool != null) {
+                    this.mysqlPool.getConnection((err, conn) => {
+                        if (err) return reject(new Error('Could not allocate MySQL connection'));
+                        else {
+                            res.locals.dl.mysql = conn;
+                            return resolve();
+                        }
+                    });
+                } else {
+                    return reject(new Error('Could not connect to the database'));
                 }
             } else {
-                throw new Error('Could not connect to the database');
+                return resolve();
             }
-        }
+        })
     }
 
 }
