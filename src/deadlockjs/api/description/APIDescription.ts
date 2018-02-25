@@ -29,6 +29,11 @@ export interface APIDescription {
     /** DDoS */
     rateLimit?: RateLimiterConfig;
 
+    /** Cache system */
+    cache?: {
+        expire: number;
+    };
+
     /** root directory. as it is an APIDirectory, it can be in a sub-directory, for instance, example.com/api/v0/ */
     root: APIDirectory;
 }

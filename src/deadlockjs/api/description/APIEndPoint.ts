@@ -3,7 +3,7 @@ import * as express from "express";
 import {APIRoute} from "./APIRoute";
 import {RateLimiterConfigOverride} from "../wrapper/preprocessor/RateLimiter";
 import {APIRouteType} from "./APIRouteType";
-import {Request, Response} from "express-serve-static-core";
+import {APIEndPointHandler} from "./APIEndPointHandler";
 
 /** An API end-point is an application entry point */
 export interface APIEndPoint extends APIRoute {
@@ -16,17 +16,15 @@ export interface APIEndPoint extends APIRoute {
     method: 'get' | 'post' | 'put' | 'delete';
 
     /** will handle the request */
-    handler: (req: Request, res: Response) => any;
+    handler: APIEndPointHandler;
 
     /** if you want to ensure request body is filled with valid data, use a valid MaskFilter here */
     paramFilter?: iof.MaskFilter,
 
-    /** caching @TODO implement */
+    /** caching */
     cache?: {
-        /** identifier function (by default, IP address) */
-        identifier?: (req: express.Request, res: express.Response) => string,
-        /** expire time */
-        timeout: number;
+        /** expire time in milliseconds */
+        expire: number;
     };
 
     /** ddos protection configuration override @TODO implement */

@@ -1,6 +1,6 @@
 import {APIDescription} from "./api/description/APIDescription";
 import * as express from "express";
-import {RequestHandler} from "express";
+import {Application, RequestHandler} from "express";
 import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
@@ -26,7 +26,8 @@ export class DeadLockJS {
                 cluster.fork();
             }
         } else {
-            http.createServer(DeadLockJS.getApp(api)).listen(api.port);
+            const app: Application = DeadLockJS.getApp(api);
+            http.createServer(app).listen(api.port);
         }
     }
 
@@ -58,7 +59,6 @@ export class DeadLockJS {
             err.status = 404;
             next(err);
         });
-
 
         // error handler
         app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {

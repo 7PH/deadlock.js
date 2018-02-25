@@ -8,6 +8,7 @@ import {IRequestWrapper} from "./IRequestWrapper";
 import {RateLimiter} from "./preprocessor/RateLimiter";
 import {RequestInitializer} from "./preprocessor/RequestInitializer";
 import {GateKeeper} from "./preprocessor/GateKeeper";
+import {PromiseCaching} from "promise-caching";
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -25,7 +26,7 @@ export class RequestWrapper implements IRequestWrapper {
     /**
      * @param {APIDescription} api
      */
-    constructor(api: APIDescription) {
+    constructor(private api: APIDescription) {
         this.preprocessors = [
             [
                 new RequestInitializer()
@@ -73,7 +74,7 @@ export class RequestWrapper implements IRequestWrapper {
      * @param {NextFunction} next
      * @TODO Refactor
      */
-    public wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction): void {
+    public async wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction) {
 
         // building promises of promises
         const promises: (() => Promise<any>)[][] = this.preprocessors.map(
@@ -84,19 +85,22 @@ export class RequestWrapper implements IRequestWrapper {
             }
         );
 
-        // getting main promise
-        this.chainParallelPromises(promises)
-            .then(this.execute.bind(this, endPoint, req, res))
-            .catch((reason: Error) => {
-                res.json({error: {message: "Request wrapper error: " + reason.message}});
-            });
-    }
-
-    private execute(endPoint: APIEndPoint, req: express.Request, res: express.Response): void {
         try {
-            endPoint.handler(req, res);
+            // preprocess
+            await this.chainParallelPromises(promises);
+            // handling request
+            let result: any;
+            if (this.api.cache != null) {
+                let expire: number = typeof endPoint.cache !== 'undefined' ? endPoint.cache.expire : this.api.cache.expire;
+                result = await PromiseCaching.get(endPoint, expire, endPoint.handler.bind(this, req, res));
+            } else {
+                result = await endPoint.handler(req, res);
+            }
+            // result output
+            res.json(result);
         } catch (e) {
-            res.json({error: {message: "An error occurred"}});
+            // error occurred during loading or request
+            res.json({error: {message: e.message}});
         }
     }
 }
