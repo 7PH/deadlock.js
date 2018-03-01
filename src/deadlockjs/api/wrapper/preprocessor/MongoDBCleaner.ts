@@ -1,14 +1,14 @@
 import {Preprocessor} from "./Preprocessor";
 import {APIEndPoint} from "../../../../";
 import * as express from "express";
-import * as mysql from "mysql";
+import {MongoClient} from "mongodb";
 
-export class MySQLCleaner implements Preprocessor {
+export class MongoDBCleaner implements Preprocessor {
     public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve) => {
             if (endPoint.dbConnection) {
-                res.on('close', this.closeMySQLConnection.bind(this, res));
-                res.on('finish', this.closeMySQLConnection.bind(this, res));
+                res.on('close', this.closeMongoDBConnection.bind(this, res));
+                res.on('finish', this.closeMongoDBConnection.bind(this, res));
             }
             resolve();
         });
@@ -18,10 +18,10 @@ export class MySQLCleaner implements Preprocessor {
      * Cleans a database connection
      * @param {express.Response} res
      */
-    private closeMySQLConnection(res: express.Response): void {
-        const connection: mysql.PoolConnection | undefined = res.locals.dl.mysql;
+    private closeMongoDBConnection(res: express.Response): void {
+        const connection: MongoClient | undefined = res.locals.dl.mongodb;
         if (connection)
-            connection.release();
+            connection.close();
     }
 
 }

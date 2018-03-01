@@ -6,6 +6,6 @@ import {APIEndPoint} from "../../../../";
  *  e.g. loading mysql connection,
  */
 
-export interface IPreprocessor {
+export interface Preprocessor {
     preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<any>;
 }

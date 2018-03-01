@@ -1,8 +1,8 @@
-import {IPreprocessor} from "./IPreprocessor";
+import {Preprocessor} from "./Preprocessor";
 import {APIEndPoint} from "../../../../";
 import * as express from "express";
 
-export class RequestBodyChecker implements IPreprocessor {
+export class RequestBodyChecker implements Preprocessor {
     public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (endPoint.paramFilter) {

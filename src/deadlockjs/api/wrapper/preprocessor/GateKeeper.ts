@@ -1,8 +1,8 @@
-import {IPreprocessor} from "./IPreprocessor";
+import {Preprocessor} from "./Preprocessor";
 import {APIDescription, APIEndPoint} from "../../../../";
 import * as express from "express";
 
-export class GateKeeper implements IPreprocessor {
+export class GateKeeper implements Preprocessor {
 
     private readonly blacklist: Array<string> = [];
 

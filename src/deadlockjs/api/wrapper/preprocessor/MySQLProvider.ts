@@ -1,10 +1,10 @@
-import {IPreprocessor} from "./IPreprocessor";
+import {Preprocessor} from "./Preprocessor";
 import {APIDescription, APIEndPoint} from "../../../../index";
 import * as mysql from "mysql";
 import * as express from "express";
 
 
-export class MySQLProvider implements IPreprocessor {
+export class MySQLProvider implements Preprocessor {
 
     private readonly mysqlPool: mysql.Pool;
 

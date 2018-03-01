@@ -3,7 +3,6 @@ import {APIDirectory} from "./APIDirectory";
 import {RateLimiterConfig} from "../wrapper/preprocessor/RateLimiter";
 
 
-
 /** The API description describes the whole API */
 export interface APIDescription {
     /** app secret */
@@ -24,6 +23,7 @@ export interface APIDescription {
     /** database */
     db?: {
         mysql?: MySQLConfig;
+        mongodb?: { url: string; };
     };
 
     /** DDoS */

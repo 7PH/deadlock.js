@@ -1,8 +1,8 @@
-import {IPreprocessor} from "./IPreprocessor";
+import {Preprocessor} from "./Preprocessor";
 import * as express from "express";
 import {APIEndPoint} from "../../../../";
 
-export class RequestInitializer implements IPreprocessor {
+export class RequestInitializer implements Preprocessor {
     preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<any> {
         res.locals.dl = {};
         return Promise.resolve();

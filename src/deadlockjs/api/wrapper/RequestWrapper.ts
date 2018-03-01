@@ -1,6 +1,6 @@
 import {APIDescription, APIEndPoint} from "../../../";
 import * as express from "express";
-import {IPreprocessor} from "./preprocessor/IPreprocessor";
+import {Preprocessor} from "./preprocessor/Preprocessor";
 import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
 import {MySQLCleaner} from "./preprocessor/MySQLCleaner";
 import {MySQLProvider} from "./preprocessor/MySQLProvider";
@@ -9,6 +9,8 @@ import {RateLimiter} from "./preprocessor/RateLimiter";
 import {RequestInitializer} from "./preprocessor/RequestInitializer";
 import {GateKeeper} from "./preprocessor/GateKeeper";
 import {PromiseCaching} from "promise-caching";
+import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
+import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -19,11 +21,12 @@ export class RequestWrapper implements IRequestWrapper {
      *      p = [[a, b], [c, d]]
      *          a, b will be executed in parallel.
      *          THEN, if all resolves, c and d will be executed in parallel
-     * @type {Array<Array<IPreprocessor>>}
+     * @type {Array<Array<Preprocessor>>}
      */
-    public readonly preprocessors: Array<Array<IPreprocessor>> = [];
+    public readonly preprocessors: Array<Array<Preprocessor>> = [];
 
     /**
+     * @param cache
      * @param {APIDescription} api
      */
     constructor(private cache: PromiseCaching, private api: APIDescription) {
@@ -36,9 +39,11 @@ export class RequestWrapper implements IRequestWrapper {
                 new RateLimiter(api),
                 new RequestBodyChecker(),
                 new MySQLCleaner(),
+                new MongoDBCleaner(),
             ],
             [
                 new MySQLProvider(api),
+                new MongoDBProvider(api),
             ]
         ];
     }
