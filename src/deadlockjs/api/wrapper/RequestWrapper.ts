@@ -26,7 +26,7 @@ export class RequestWrapper implements IRequestWrapper {
     /**
      * @param {APIDescription} api
      */
-    constructor(private api: APIDescription) {
+    constructor(private cache: PromiseCaching, private api: APIDescription) {
         this.preprocessors = [
             [
                 new RequestInitializer()
@@ -92,12 +92,13 @@ export class RequestWrapper implements IRequestWrapper {
             let result: any;
             if (this.api.cache != null) {
                 let expire: number = typeof endPoint.cache !== 'undefined' ? endPoint.cache.expire : this.api.cache.expire;
-                result = await PromiseCaching.get(endPoint, expire, endPoint.handler.bind(this, req, res));
+                result = await this.cache.get(endPoint, expire, endPoint.handler.bind(this, req, res));
             } else {
                 result = await endPoint.handler(req, res);
             }
             // result output
-            res.json(result);
+            if (result == null) result = {};
+            res.json({error: undefined, data: result});
         } catch (e) {
             // error occurred during loading or request
             res.json({error: {message: e.message}});

@@ -9,6 +9,7 @@ import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as http from "http";
 import * as cluster from "cluster";
+import {PromiseCaching} from "promise-caching";
 
 /**
  * Main utility class
@@ -38,6 +39,7 @@ export class DeadLockJS {
      */
     private static getApp(api: APIDescription): express.Application {
         const app = express();
+        const deadLock = new DeadLockJS();
 
         // view engine setup
 
@@ -80,7 +82,7 @@ export class DeadLockJS {
      */
     private static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
-            new RequestWrapper(api),
+            new RequestWrapper(new PromiseCaching(), api),
             [api.root],
             api.root,
             '',
