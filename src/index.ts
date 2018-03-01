@@ -13,7 +13,7 @@ export * from './deadlockjs/api/wrapper/local/RequestLocal';
 
 export * from './deadlockjs/api/wrapper/preprocessor/MySQLCleaner';
 export * from './deadlockjs/api/wrapper/preprocessor/MySQLProvider';
-export * from './deadlockjs/api/wrapper/preprocessor/IPreprocessor';
+export * from './deadlockjs/api/wrapper/preprocessor/Preprocessor';
 export * from './deadlockjs/api/wrapper/preprocessor/RateLimiter';
 export * from './deadlockjs/api/wrapper/preprocessor/RequestBodyChecker';
 export * from './deadlockjs/api/wrapper/preprocessor/RequestInitializer';

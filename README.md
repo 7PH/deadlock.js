@@ -29,7 +29,7 @@ All these features are optional. See examples below
 - [X] Request body validation and filtering
 - [X] Clustering
 - [X] IP Blacklist
-- [ ] MongoDB support
+- [X] MongoDB support
 - [ ] HTTP2 Support
 - [ ] TLS Support
 - [ ] Logs

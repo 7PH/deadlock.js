@@ -15,6 +15,11 @@ const api: APIDescription = {
         maxPending: 0,
         maxWeightPerSec: 1
     },
+    db: {
+        mongodb: {
+            url: "mongodb://localhost:27017"
+        }
+    },
     cache: {
         expire: 2000
     },
@@ -26,6 +31,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
+                dbConnection: true,
                 handler: async (req: Request, res: Response) => {
                     throw new Error("issou");
                 }

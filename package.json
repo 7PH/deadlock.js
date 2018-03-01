@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/7PH/DeadLockJS#readme",
   "dependencies": {
+    "@types/mongodb": "^3.0.5",
     "express": "^4.16.2",
     "io-filter": "^2.0.1",
     "mongodb": "^3.0.3",
