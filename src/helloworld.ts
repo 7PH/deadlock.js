@@ -1,4 +1,4 @@
-import * as express from "express";
+import {Request, Response} from "express";
 import {APIDescription} from "./deadlockjs/api/description/APIDescription";
 import {APIRouteType} from "./deadlockjs/api/description/APIRouteType";
 import {DeadLockJS} from "./deadlockjs/DeadLockJS";
@@ -26,7 +26,9 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
-                handler: async (req: express.Request, res: express.Response) => { return Promise.reject(new Error("issou")); }
+                handler: async (req: Request, res: Response) => {
+                    throw new Error("issou");
+                }
             }
         ]
     }
