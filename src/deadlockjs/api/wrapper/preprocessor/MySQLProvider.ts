@@ -21,7 +21,7 @@ export class MySQLProvider implements Preprocessor {
 
     public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (this.activated && endPoint.dbConnection) {
+            if (this.activated && endPoint.db && endPoint.db.mysql) {
                 if (this.mysqlPool != null) {
                     this.mysqlPool.getConnection((err, conn) => {
                         if (err) return reject(new Error('Could not allocate MySQL connection'));

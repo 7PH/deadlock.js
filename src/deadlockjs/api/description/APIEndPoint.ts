@@ -31,5 +31,8 @@ export interface APIEndPoint extends APIRoute {
     rateLimit?: RateLimiterConfigOverride;
 
     /** wether this end-point needs database allocation (an instance of mysql) */
-    dbConnection?: boolean;
+    db?: {
+        mysql?: boolean;
+        mongodb?: boolean;
+    };
 }

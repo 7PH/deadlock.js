@@ -22,7 +22,7 @@ export class MongoDBProvider implements Preprocessor {
 
     public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (this.activated && endPoint.dbConnection) {
+            if (this.activated && endPoint.db && endPoint.db.mongodb) {
                 MongoClient.connect(this.url, (err: any, client: MongoClient) => {
                     if (err) return reject(err);
                     else {
