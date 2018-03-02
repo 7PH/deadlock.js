@@ -1,6 +1,6 @@
 {
   "name": "deadlockjs",
-  "version": "1.2.169",
+  "version": "1.2.170",
   "description": "Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -28,8 +28,12 @@
     "@types/mongodb": "^3.0.5",
     "express": "^4.16.2",
     "io-filter": "^2.0.1",
+    "jsonwebtoken": "^8.1.1",
     "mongodb": "^3.0.3",
     "mysql": "^2.15.0",
     "promise-caching": "0.0.7"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^7.2.5"
   }
 }

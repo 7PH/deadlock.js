@@ -2,7 +2,8 @@ import {Request, Response} from "express";
 import {APIDescription} from "./deadlockjs/api/description/APIDescription";
 import {APIRouteType} from "./deadlockjs/api/description/APIRouteType";
 import {DeadLockJS} from "./deadlockjs/DeadLockJS";
-
+import {ObjectFilter, ValueTypeFilter} from "io-filter";
+import * as jwt from 'jsonwebtoken';
 
 const api: APIDescription = {
     appSecret: '1f4600bc0380273f90ed02db217cfbf',
@@ -29,9 +30,21 @@ const api: APIDescription = {
         routes: [
             {
                 kind: APIRouteType.END_POINT,
+                path: '/login',
+                method: 'post',
+                db: {mysql: true},
+                paramFilter: new ObjectFilter({
+                    token: new ValueTypeFilter('string')
+                }),
+                handler: async (req: Request, res: Response) => {
+                    return jwt.verify(res.locals.dl.params.token, 'issou', {algorithms: ['HS256']});
+                }
+            },
+            {
+                kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
-                dbConnection: true,
+                db: {mysql: true},
                 handler: async (req: Request, res: Response) => {
                     throw new Error("issou");
                 }
