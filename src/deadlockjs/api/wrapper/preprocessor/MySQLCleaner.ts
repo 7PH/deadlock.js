@@ -6,7 +6,7 @@ import * as mysql from "mysql";
 export class MySQLCleaner implements Preprocessor {
     public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve) => {
-            if (endPoint.dbConnection) {
+            if (endPoint.db && endPoint.db.mysql) {
                 res.on('close', this.closeMySQLConnection.bind(this, res));
                 res.on('finish', this.closeMySQLConnection.bind(this, res));
             }

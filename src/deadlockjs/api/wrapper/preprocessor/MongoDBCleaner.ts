@@ -6,7 +6,7 @@ import {MongoClient} from "mongodb";
 export class MongoDBCleaner implements Preprocessor {
     public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
         return new Promise<void>((resolve) => {
-            if (endPoint.dbConnection) {
+            if (endPoint.db && endPoint.db.mongodb) {
                 res.on('close', this.closeMongoDBConnection.bind(this, res));
                 res.on('finish', this.closeMongoDBConnection.bind(this, res));
             }
