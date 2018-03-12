@@ -1,6 +1,6 @@
 import {MySQLConfig} from "./MySQLConfig";
 import {APIDirectory} from "./APIDirectory";
-import {RateLimiterConfig} from "../wrapper/preprocessor/RateLimiter";
+import {RateLimiterConfig} from "../../../";
 
 
 /** The API description describes the whole API */
@@ -19,6 +19,9 @@ export interface APIDescription {
 
     /** port */
     port: number;
+
+    /** host name */
+    hostname?: string;
 
     /** database */
     db?: {

@@ -4,12 +4,14 @@ import {Application, RequestHandler} from "express";
 import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
-import {RequestWrapper} from "./api/wrapper/RequestWrapper";
+import {RequestWrapper} from "./api/wrapper/RequestWrapperImpl";
 import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as http from "http";
 import * as cluster from "cluster";
 import {PromiseCaching} from "promise-caching";
+
+
 
 /**
  * Main utility class
@@ -21,14 +23,18 @@ export class DeadLockJS {
      * @param {APIDescription} api
      */
     public static startApp(api: APIDescription): void {
-
         if (cluster.isMaster) {
-            for (let i = 0; i < api.workers; i ++) {
+            // spawns workers
+            for (let i = 0; i < api.workers; i ++)
                 cluster.fork();
-            }
-        } else {
+            return;
+        }
+
+        if (cluster.isWorker) {
+            // These are the workers handling http requests
             const app: Application = DeadLockJS.getApp(api);
-            http.createServer(app).listen(api.port);
+            http.createServer(app).listen(api.port, api.hostname);
+            return;
         }
     }
 
@@ -117,12 +123,10 @@ export class DeadLockJS {
                  *   One preprocessor or more can be attached to a directory
                  */
                 case APIRouteType.DIRECTORY:
-                    // append current path to global path
-                    path = path + (route as APIDirectory).path;
                     // output new path
-                    //console.log(path + " (directory)");
+                    //console.log(path + (route as APIDirectory).path + " (directory)");
                     // recursively builds the router for sub-directory
-                    let subRouter: express.Router = this.buildRouterForRoutes(wrapper, (route as APIDirectory).routes, route as APIDirectory, path, depth + 1);
+                    let subRouter: express.Router = this.buildRouterForRoutes(wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
                     // attach the router
                     router.use((route as APIDirectory).path, subRouter);
                     break;

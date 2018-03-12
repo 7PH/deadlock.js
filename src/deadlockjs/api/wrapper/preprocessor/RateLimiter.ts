@@ -30,7 +30,6 @@ export class RateLimiter implements Preprocessor {
 
     /**
      * Default RateLimiter configuration
-     * @type {{defaultAction: RateLimiterAction; weight: number; maxWeightPerSec: number}}
      */
     public static readonly DEFAULT_CONFIG: RateLimiterConfig = {
         ipWhitelist: [],
