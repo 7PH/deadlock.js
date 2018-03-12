@@ -3,9 +3,8 @@ import * as express from "express";
 import {APIEndPoint} from "../../../../";
 
 export class RequestInitializer implements Preprocessor {
-    preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<any> {
-        res.locals.dl = {};
-        return Promise.resolve();
+    async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+        res.locals.dl = {ip: req.connection.remoteAddress || "UNDEFINED"};
     }
 
 }
