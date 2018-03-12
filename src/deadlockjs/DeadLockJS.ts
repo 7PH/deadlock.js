@@ -152,7 +152,9 @@ export class DeadLockJS {
     private static buildMiddleware(middleware: APIMiddleware[]): RequestHandler {
         return function(req: Request, res: Response, next: NextFunction) {
             Promise.all(middleware.map(middle => middle(req, res)))
-                .then(next)
+                .then(result => {
+                    next();
+                })
                 .catch(error => {
                     res.json({error: {message: error.message}});
                 });

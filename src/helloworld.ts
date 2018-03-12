@@ -27,7 +27,7 @@ const api: APIDescription = {
     root: {
         kind: APIRouteType.DIRECTORY,
         path: '/api/v1',
-        middleware: [async (req: Request, res: Response) => { throw new Error("issou"); }],
+        middleware: [async (req: Request, res: Response) => { return; }],
         routes: [
             {
                 kind: APIRouteType.END_POINT,
