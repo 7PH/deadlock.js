@@ -1,6 +1,6 @@
 import {APIDescription} from "./api/description/APIDescription";
 import * as express from "express";
-import {Application, RequestHandler} from "express";
+import {Application, NextFunction, Request, RequestHandler, Response} from "express";
 import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
@@ -10,6 +10,7 @@ import * as bodyParser from "body-parser";
 import * as http from "http";
 import * as cluster from "cluster";
 import {PromiseCaching} from "promise-caching";
+import {APIMiddleware} from "./api/description/APIMiddleware";
 
 
 
@@ -45,7 +46,6 @@ export class DeadLockJS {
      */
     private static getApp(api: APIDescription): express.Application {
         const app = express();
-        const deadLock = new DeadLockJS();
 
         // view engine setup
 
@@ -110,7 +110,7 @@ export class DeadLockJS {
 
         // attach the preprocessor(s)
         if (parent.middleware != null && depth > 0)
-            router.use(parent.middleware);
+            router.use(DeadLockJS.buildMiddleware(parent.middleware));
 
         // attach directory routes
         for (let i in routes) {
@@ -144,4 +144,18 @@ export class DeadLockJS {
         return router;
     }
 
+    /**
+     *
+     * @param {APIMiddleware | APIMiddleware[]} middleware
+     * @returns {e.RequestHandler}
+     */
+    private static buildMiddleware(middleware: APIMiddleware[]): RequestHandler {
+        return function(req: Request, res: Response, next: NextFunction) {
+            Promise.all(middleware.map(middle => middle(req, res)))
+                .then(next)
+                .catch(error => {
+                    res.json({error: {message: error.message}});
+                });
+        }
+    }
 }
