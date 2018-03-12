@@ -1,6 +1,6 @@
 {
   "name": "deadlockjs",
-  "version": "1.2.184",
+  "version": "1.2.185",
   "description": "Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
