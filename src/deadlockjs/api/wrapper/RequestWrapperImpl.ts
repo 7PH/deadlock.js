@@ -105,7 +105,7 @@ export class RequestWrapper implements IRequestWrapper {
             if (typeof endPoint.middlewares !== 'undefined') {
                 await Promise.all(
                     endPoint.middlewares.map(
-                        middleware => middleware.bind(middleware, req, res)
+                        middleware => middleware(req, res)
                     )
                 );
             }
