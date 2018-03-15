@@ -95,8 +95,9 @@ export class RequestWrapper implements IRequestWrapper {
             await this.chainParallelPromises(promises);
             // handling request
             let result: any;
-            if (this.api.cache != null) {
-                let expire: number = typeof endPoint.cache !== 'undefined' ? endPoint.cache.expire : this.api.cache.expire;
+
+            if (endPoint.cache != null) {
+                let expire: number = (endPoint.cache || this.api.cache || {expire: 1000}).expire;
                 result = await this.cache.get(endPoint, expire, endPoint.handler.bind(this, req, res));
             } else {
                 result = await endPoint.handler(req, res);
