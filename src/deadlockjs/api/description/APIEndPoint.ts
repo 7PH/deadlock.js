@@ -1,9 +1,9 @@
 import * as iof from "io-filter";
-import * as express from "express";
 import {APIRoute} from "./APIRoute";
 import {RateLimiterConfigOverride} from "../wrapper/preprocessor/RateLimiter";
 import {APIRouteType} from "./APIRouteType";
 import {APIEndPointHandler} from "./APIEndPointHandler";
+import {APIMiddleware} from "./APIMiddleware";
 
 /** An API end-point is an application entry point */
 export interface APIEndPoint extends APIRoute {
@@ -17,6 +17,9 @@ export interface APIEndPoint extends APIRoute {
 
     /** will handle the request */
     handler: APIEndPointHandler;
+
+    /** custom preprocessors */
+    middlewares?: APIMiddleware[];
 
     /** if you want to ensure request body is filled with valid data, use a valid MaskFilter here */
     paramFilter?: iof.MaskFilter,

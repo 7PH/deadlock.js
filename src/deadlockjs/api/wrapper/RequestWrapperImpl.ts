@@ -11,6 +11,8 @@ import {GateKeeper} from "./preprocessor/GateKeeper";
 import {PromiseCaching} from "promise-caching";
 import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
 import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
+import {response} from "spdy";
+import end = response.end;
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -71,6 +73,13 @@ export class RequestWrapper implements IRequestWrapper {
         }, first());
     }
 
+    private preprocessorsToPromiseGenerator(preprocessors: Preprocessor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
+        return preprocessors.map(
+            preprocessor =>
+                preprocessor.preprocess.bind(preprocessor, endPoint, req, res)
+        );
+    }
+
     /**
      * Wrap every call on an API end-point
      * @param {APIEndPoint} endPoint
@@ -84,15 +93,23 @@ export class RequestWrapper implements IRequestWrapper {
         // building promises of promises
         const promises: (() => Promise<any>)[][] = this.preprocessors.map(
             preprocessors => {
-                return preprocessors.map(
-                    preprocessor => preprocessor.preprocess.bind(preprocessor, endPoint, req, res)
-                );
+                return this.preprocessorsToPromiseGenerator(preprocessors, endPoint, req, res);
             }
         );
 
         try {
             // preprocess
             await this.chainParallelPromises(promises);
+
+            // custom middle
+            if (typeof endPoint.middlewares !== 'undefined') {
+                await Promise.all(
+                    endPoint.middlewares.map(
+                        middleware => middleware.bind(middleware, req, res)
+                    )
+                );
+            }
+
             // handling request
             let result: any;
 
