@@ -15,6 +15,9 @@ import {response} from "spdy";
 import end = response.end;
 import {TimingAttack} from "./preprocessor/TimingAttack";
 
+/**
+ * @TODO Implement custom cache keys
+ */
 export class RequestWrapper implements IRequestWrapper {
 
     /**

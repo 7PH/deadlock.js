@@ -150,7 +150,7 @@ export class DeadLockJS {
 
     public static endPointToString(path: string, endPoint: APIEndPoint): string {
         let s: string = "";
-        s += path + endPoint.path + " (" + endPoint.method + ")";
+        s += endPoint.method.toUpperCase().padEnd(5) + ": " + path + endPoint.path;
         if (typeof endPoint.cache !== 'undefined')
             s += " (cache: " + endPoint.cache.expire + "ms)";
         if (typeof endPoint.paramFilter !== 'undefined')
