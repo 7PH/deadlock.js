@@ -154,7 +154,7 @@ export class DeadLockJS {
         s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path + endPoint.path;
         if (typeof api.rateLimit !== 'undefined') {
             let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
-            let rqtPerSec = weight / api.rateLimit.maxWeightPerSec;
+            let rqtPerSec = api.rateLimit.maxWeightPerSec / weight;
             s += "\n    RateLimit: " + rqtPerSec + " rqt/sec";
         }
         if (typeof endPoint.cache !== 'undefined')
