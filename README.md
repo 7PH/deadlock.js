@@ -30,7 +30,7 @@ All these features are optional. See examples below
 - [X] Clustering
 - [X] IP Blacklist
 - [X] MongoDB support
-- [X] Timing Attack prevention
+- [X] Timing Attack mitigation
 - [ ] HTTP2 Support
 - [ ] TLS Support
 - [ ] Logs
