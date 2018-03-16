@@ -92,6 +92,7 @@ export class DeadLockJS {
      */
     private static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
+            api,
             new RequestWrapper(new PromiseCaching(), api),
             [api.root],
             api.root,
@@ -108,7 +109,7 @@ export class DeadLockJS {
      * @param {number} depth Current depth of router
      * @returns {e.Router}
      */
-    private static buildRouterForRoutes(wrapper: RequestWrapper, routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
+    private static buildRouterForRoutes(api: APIDescription, wrapper: RequestWrapper, routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
         const router: express.Router = express.Router({mergeParams: true});
 
@@ -130,7 +131,7 @@ export class DeadLockJS {
                     // output new path
                     //console.log(path + (route as APIDirectory).path + " (directory)");
                     // recursively builds the router for sub-directory
-                    let subRouter: express.Router = this.buildRouterForRoutes(wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
+                    let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
                     // attach the router
                     router.use((route as APIDirectory).path, subRouter);
                     break;
@@ -139,7 +140,7 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
                 case APIRouteType.END_POINT:
-                    console.log(DeadLockJS.endPointToString(path, route as APIEndPoint));
+                    console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
                     let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;
@@ -148,11 +149,16 @@ export class DeadLockJS {
         return router;
     }
 
-    public static endPointToString(path: string, endPoint: APIEndPoint): string {
+    public static endPointToString(api: APIDescription, endPoint: APIEndPoint, path: string): string {
         let s: string = "";
-        s += endPoint.method.toUpperCase().padEnd(5) + ": " + path + endPoint.path;
+        s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path + endPoint.path;
+        if (typeof api.rateLimit !== 'undefined') {
+            let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
+            let rqtPerSec = weight / api.rateLimit.maxWeightPerSec;
+            s += "\n    RateLimit: " + rqtPerSec + " rqt/sec";
+        }
         if (typeof endPoint.cache !== 'undefined')
-            s += " (cache: " + endPoint.cache.expire + "ms)";
+            s += "\n    Caching: " + endPoint.cache.expire + "ms";
         if (typeof endPoint.paramFilter !== 'undefined')
             s += "\n    " + endPoint.paramFilter.toString();
         return s;

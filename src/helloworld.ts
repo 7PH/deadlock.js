@@ -45,6 +45,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
+                rateLimit: {weight: 10},
                 cache: {expire: 1000},
                 db: {mysql: true},
                 handler: async (req: Request, res: Response) => {
