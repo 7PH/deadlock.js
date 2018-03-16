@@ -139,13 +139,23 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
                 case APIRouteType.END_POINT:
-                    console.log(path + (route as APIEndPoint).path + " (" + (route as APIEndPoint).method + ")");
+                    console.log(DeadLockJS.endPointToString(path, route as APIEndPoint));
                     let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;
             }
         }
         return router;
+    }
+
+    public static endPointToString(path: string, endPoint: APIEndPoint): string {
+        let s: string = "";
+        s += path + endPoint.path + " (" + endPoint.method + ")";
+        if (typeof endPoint.cache !== 'undefined')
+            s += " (cache: " + endPoint.cache.expire + "ms)";
+        if (typeof endPoint.paramFilter !== 'undefined')
+            s += "";
+        return s;
     }
 
     /**

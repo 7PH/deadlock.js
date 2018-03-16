@@ -13,6 +13,7 @@ import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
 import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
 import {response} from "spdy";
 import end = response.end;
+import {TimingAttack} from "./preprocessor/TimingAttack";
 
 export class RequestWrapper implements IRequestWrapper {
 
@@ -46,6 +47,9 @@ export class RequestWrapper implements IRequestWrapper {
             [
                 new MySQLProvider(api),
                 new MongoDBProvider(api),
+            ],
+            [
+                new TimingAttack()
             ]
         ];
     }

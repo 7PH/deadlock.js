@@ -45,6 +45,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
+                cache: {expire: 1000},
                 db: {mysql: true},
                 handler: async (req: Request, res: Response) => {
                     throw new Error("issou");
