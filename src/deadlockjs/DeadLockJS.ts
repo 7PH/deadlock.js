@@ -110,7 +110,7 @@ export class DeadLockJS {
      */
     private static buildRouterForRoutes(wrapper: RequestWrapper, routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
-        const router: express.Router = express.Router();
+        const router: express.Router = express.Router({mergeParams: true});
 
         // attach the preprocessor(s)
         if (parent.middleware != null && depth > 0)
@@ -154,7 +154,7 @@ export class DeadLockJS {
         if (typeof endPoint.cache !== 'undefined')
             s += " (cache: " + endPoint.cache.expire + "ms)";
         if (typeof endPoint.paramFilter !== 'undefined')
-            s += " params: " + endPoint.paramFilter.toString();
+            s += "\n    " + endPoint.paramFilter.toString();
         return s;
     }
 
