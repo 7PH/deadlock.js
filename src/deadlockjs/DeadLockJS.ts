@@ -154,7 +154,7 @@ export class DeadLockJS {
         if (typeof endPoint.cache !== 'undefined')
             s += " (cache: " + endPoint.cache.expire + "ms)";
         if (typeof endPoint.paramFilter !== 'undefined')
-            s += "";
+            s += " params: " + endPoint.paramFilter.toString();
         return s;
     }
 
