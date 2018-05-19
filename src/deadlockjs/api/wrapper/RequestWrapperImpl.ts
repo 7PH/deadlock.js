@@ -122,10 +122,14 @@ export class RequestWrapper implements IRequestWrapper {
 
             if (endPoint.cache != null) {
                 let expire: number = (endPoint.cache || this.api.cache || {expire: 1000}).expire;
-                result = await this.cache.get(endPoint, expire, endPoint.handler.bind(this, req, res));
+                result = await this.cache.get(
+                    endPoint,
+                    expire,
+                    endPoint.handler.bind(this, res.locals.dl));
             } else {
-                result = await endPoint.handler(req, res);
+                result = await endPoint.handler(res.locals.dl);
             }
+
             // result output
             if (result == null) result = {};
             res.json({error: undefined, data: result});

@@ -1,5 +1,5 @@
-import * as express from 'express';
+import {RequestLocal} from "../../..";
 
 export interface APIEndPointHandler {
-    (req: express.Request, res: express.Response): Promise<any>;
+    (dl: RequestLocal): Promise<any>;
 }

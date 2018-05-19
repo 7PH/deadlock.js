@@ -4,6 +4,7 @@ import {APIRouteType} from "./deadlockjs/api/description/APIRouteType";
 import {DeadLockJS} from "./deadlockjs/DeadLockJS";
 import {ObjectFilter, ValueTypeFilter} from "io-filter";
 import * as jwt from 'jsonwebtoken';
+import {RequestLocal} from "./deadlockjs/api/wrapper/local/RequestLocal";
 
 const api: APIDescription = {
     appSecret: '1f4600bc0380273f90ed02db217cfbf',
@@ -37,8 +38,8 @@ const api: APIDescription = {
                 paramFilter: new ObjectFilter({
                     token: new ValueTypeFilter('string')
                 }),
-                handler: async (req: Request, res: Response) => {
-                    return jwt.verify(res.locals.dl.params.token, 'issou', {algorithms: ['HS256']});
+                handler: async (dl: RequestLocal) => {
+                    return jwt.verify(dl.requestInfo.params.token, 'Nope', {algorithms: ['HS256']});
                 }
             },
             {
@@ -48,8 +49,8 @@ const api: APIDescription = {
                 rateLimit: {weight: 10},
                 cache: {expire: 1000},
                 db: {mysql: true},
-                handler: async (req: Request, res: Response) => {
-                    throw new Error("issou");
+                handler: async (dl: RequestLocal) => {
+                    throw new Error("Nope");
                 }
             }
         ]

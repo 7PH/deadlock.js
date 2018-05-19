@@ -4,7 +4,12 @@ import {APIEndPoint} from "../../../../";
 
 export class RequestInitializer implements Preprocessor {
     async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
-        res.locals.dl = {ip: req.connection.remoteAddress || "UNDEFINED"};
+        res.locals.dl = {
+            requestInfo: {
+                ip: req.connection.remoteAddress || "UNDEFINED",
+                time: new Date().getTime() / 1000
+            }
+        };
     }
 
 }
