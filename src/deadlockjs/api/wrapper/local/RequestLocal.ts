@@ -1,5 +1,6 @@
 import {PoolConnection} from "mysql";
 import {MongoClient} from "mongodb";
+import {Request, Response} from "express";
 
 export interface RequestLocal {
 
@@ -8,6 +9,12 @@ export interface RequestLocal {
 
     /** MongoDB connection */
     mongodb: MongoClient;
+
+    /** Optional because it will be removed further versions */
+    express?: {
+        req: Request;
+        res: Response;
+    }
 
     /** Request info */
     requestInfo: {
