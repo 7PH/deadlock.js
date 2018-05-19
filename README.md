@@ -53,8 +53,7 @@ This library uses io-filter to validate request body
 Here is a simple working example, without database connection and rate limit:
 ```typescript
 
-import {APIDescription, APIRouteType, DeadLockJS} from "deadlockjs";
-import * as express from 'express';
+import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 
 const api: APIDescription = {
     appSecret: '',
@@ -68,7 +67,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'get',
-                handler: async (req: express.Request, res: express.Response) => { return {a: Math.random()}; }
+                handler: async (dl: RequestLocal) => { return {a: Math.random()}; }
             }
         ]
     }
@@ -84,9 +83,8 @@ That's all you need to get your web server up and running!
 Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
 ```typescript
-import {APIDescription, APIRouteType, DeadLockJS} from "deadlockjs";
+import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
-import * as express from 'express';
 
 const api: APIDescription = {
     appSecret: '',
@@ -139,9 +137,9 @@ const api: APIDescription = {
                     /** expire time in milliseconds: override defaut configuration */
                     expire: 1000
                 },
-                handler: async (req: express.Request, res: express.Response) => {
-                    // res.locals.dl.mysql -> MySQL Pool Connection
-                    // res.locals.dl.params -> {pseudo: string, password: string}
+                handler: async (dl: RequestLocal) => {
+                    // dl.mysql -> MySQL Pool Connection
+                    // dl.requestInfo.params -> {pseudo: string, password: string}
                     return {a: Math.random()};
                 }
             }
