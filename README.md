@@ -31,6 +31,7 @@ All these features are optional. See examples below
 - [X] IP Blacklist
 - [X] MongoDB support
 - [X] Timing Attack mitigation
+- [ ] File upload
 - [ ] HTTP2 Support
 - [ ] TLS Support
 - [ ] Logs
