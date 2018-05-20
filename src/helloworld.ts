@@ -4,7 +4,7 @@ import {DeadLockJS} from "./deadlockjs/DeadLockJS";
 import {RequestLocal} from "./deadlockjs/api/wrapper/local/RequestLocal";
 
 const api: APIDescription = {
-    appSecret: '1f4600bc0380273f90ed02db217cfbf',
+    appSecret: '',
     workers: 1,
     port: 3000,
     ipBlacklist: [],
