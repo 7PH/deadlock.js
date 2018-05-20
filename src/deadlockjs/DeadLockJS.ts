@@ -11,8 +11,7 @@ import * as http from "http";
 import * as cluster from "cluster";
 import {PromiseCaching} from "promise-caching";
 import {APIMiddleware} from "./api/description/APIMiddleware";
-
-
+import * as multer from "multer";
 
 /**
  * Main utility class
@@ -56,14 +55,22 @@ export class DeadLockJS {
             res.removeHeader("X-Powered-By");
             next();
         });
+
+        // file upload
+        if (typeof api.globalUpload !== "undefined") {
+            const upload: multer.Instance = multer(api.globalUpload);
+            app.use(upload.any());
+        }
+
+        // usual uploads
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
         //app.use(cookieParser());
         app.use(express.static(path.join(__dirname, 'public')));
 
+
         // attach the API here
         app.use('/', DeadLockJS.buildRouter(api));
-
 
         // catch 404 and forward to error handler
         app.use(function(req: any, res: any, next: any) {
@@ -79,7 +86,7 @@ export class DeadLockJS {
             res.locals.error = req.app.get('env') === 'development' ? err : {};
             // render the error page
             res.status(err.status || 500);
-            res.json({error: {message: "404 Not Found"}});
+            res.json({error: err.message});
         });
 
         return app;

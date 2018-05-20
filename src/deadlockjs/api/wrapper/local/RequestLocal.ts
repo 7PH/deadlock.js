@@ -10,8 +10,8 @@ export interface RequestLocal {
     /** MongoDB connection */
     mongodb: MongoClient;
 
-    /** Optional because it will be removed further versions */
-    express?: {
+    /** Deprecated */
+    express: {
         req: Request;
         res: Response;
     }

@@ -1,6 +1,7 @@
 import {MySQLConfig} from "./MySQLConfig";
 import {APIDirectory} from "./APIDirectory";
 import {RateLimiterConfig} from "../../../";
+import * as multer from "multer";
 
 
 /** The API description describes the whole API */
@@ -22,6 +23,9 @@ export interface APIDescription {
 
     /** host name */
     hostname?: string;
+
+    /** whether allow global upload */
+    globalUpload?: multer.Options;
 
     /** database */
     db?: {
