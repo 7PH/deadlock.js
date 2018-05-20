@@ -30,7 +30,7 @@ const api: APIDescription = {
                 kind: APIRouteType.END_POINT,
                 path: '/',
                 method: 'post',
-                db: {mysql: true},
+                db: {mongodb: true},
                 handler: async (dl: RequestLocal) => {
                     return {
                         files: dl.express.req.files,
