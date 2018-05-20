@@ -18,7 +18,7 @@ export * from './deadlockjs/api/wrapper/preprocessor/RateLimiter';
 export * from './deadlockjs/api/wrapper/preprocessor/RequestBodyChecker';
 export * from './deadlockjs/api/wrapper/preprocessor/RequestInitializer';
 
+export * from './deadlockjs/api/wrapper/IRequestWrapper';
 export * from './deadlockjs/api/wrapper/RequestWrapper';
-export * from './deadlockjs/api/wrapper/RequestWrapperImpl';
 
 export * from './deadlockjs/DeadLockJS';

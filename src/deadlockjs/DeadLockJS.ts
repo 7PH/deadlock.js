@@ -4,7 +4,7 @@ import {Application, NextFunction, Request, RequestHandler, Response} from "expr
 import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {APIRouteType} from "./api/description/APIRouteType";
-import {RequestWrapper} from "./api/wrapper/RequestWrapperImpl";
+import {RequestWrapper} from "./api/wrapper/RequestWrapper";
 import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as http from "http";
