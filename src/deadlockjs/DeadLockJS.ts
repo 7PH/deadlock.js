@@ -12,6 +12,7 @@ import * as cluster from "cluster";
 import {PromiseCaching} from "promise-caching";
 import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
+import {Server} from "http";
 
 /**
  * Main utility class
@@ -22,20 +23,20 @@ export class DeadLockJS {
      * Build and start an express app with a specified api description
      * @param {APIDescription} api
      */
-    public static startApp(api: APIDescription): void {
+    public static startApp(api: APIDescription): Promise<http.Server> {
         if (cluster.isMaster) {
             // spawns workers
-            for (let i = 0; i < api.workers; i ++)
+            for (let i = 0; i < api.workers - 1; i ++)
                 cluster.fork();
-            return;
         }
 
-        if (cluster.isWorker) {
-            // These are the workers handling http requests
-            const app: Application = DeadLockJS.getApp(api);
-            http.createServer(app).listen(api.port, api.hostname);
-            return;
-        }
+        // These are the workers handling http requests
+        const app: Application = DeadLockJS.getApp(api);
+
+        return new Promise(resolve => {
+            const server: http.Server = http.createServer(app);
+            server.listen(api.port, api.hostname, () => resolve(server));
+        });
     }
 
     /**
@@ -147,7 +148,7 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
                 case APIRouteType.END_POINT:
-                    console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
+                    // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
                     let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
                     break;
