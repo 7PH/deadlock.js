@@ -1,18 +1,19 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "removeComments": true,
-    "declaration": true,
-    "outDir": "./dist/",
-    "target": "es2017"
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "compilerOptions": {
+        "module": "commonjs",
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "declaration": true,
+        "outDir": "./dist/",
+        "target": "es2017"
+    },
+    "include": [
+        "src/**/*",
+        "test/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
