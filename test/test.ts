@@ -54,7 +54,7 @@ describe('DeadLockJS test', function () {
         const url: string = this.baseUrl + 'get';
         let result: any = JSON.parse(await request.get(url));
         if (! result || ! result.data || ! result.data.a || result.data.a !== 2)
-            throw new Error("FUCK");
+            throw new Error("GET error");
     });
 
     /** POST */
@@ -62,7 +62,7 @@ describe('DeadLockJS test', function () {
         const url: string = this.baseUrl + 'post';
         let result: any = JSON.parse(await request.post(url));
         if (! result || ! result.data || ! result.data.a || result.data.a !== 3)
-            throw new Error("FUCK");
+            throw new Error("POST error");
     });
 
 });
