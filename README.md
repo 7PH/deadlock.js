@@ -32,6 +32,7 @@ All these features are optional. See examples below
 - [X] MongoDB support
 - [X] Timing Attack mitigation
 - [X] File upload
+- [X] CORS management
 - [ ] HTTP2 Support
 - [ ] TLS Support
 - [ ] Logs
