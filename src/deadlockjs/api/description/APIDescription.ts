@@ -2,12 +2,16 @@ import {MySQLConfig} from "./MySQLConfig";
 import {APIDirectory} from "./APIDirectory";
 import {RateLimiterConfig} from "../../../";
 import * as multer from "multer";
+import * as cors from "cors";
 
 
 /** The API description describes the whole API */
 export interface APIDescription {
     /** app secret */
     appSecret: string;
+
+    /** cors options */
+    cors?: cors.CorsOptions;
 
     /** amount of workers */
     workers: number;

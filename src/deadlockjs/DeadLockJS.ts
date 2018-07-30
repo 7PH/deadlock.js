@@ -13,6 +13,7 @@ import {PromiseCaching} from "promise-caching";
 import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
 import {Server} from "http";
+import * as cors from "cors";
 
 /**
  * Main utility class
@@ -56,6 +57,10 @@ export class DeadLockJS {
             res.removeHeader("X-Powered-By");
             next();
         });
+
+        // cors
+        if (typeof api.cors !== 'undefined')
+            app.use(cors(api.cors));
 
         // file upload
         if (typeof api.globalUpload !== "undefined") {

@@ -1,7 +1,6 @@
 import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "../src";
 import * as request from "request-promise-native"
 
-
 const HOST: string = 'localhost';
 const PORT: number = 48654;
 const PATH: string = '/api/test';
@@ -9,10 +8,14 @@ const PATH: string = '/api/test';
 const api: APIDescription = {
     appSecret: '',
     workers: 1,
+    cors: {
+        origin: 'http://localhost:3000'
+    },
     hostname: HOST,
     port: PORT,
     root: {
         kind: APIRouteType.DIRECTORY,
+        middleware: [],
         path: PATH,
         routes: [
             {
