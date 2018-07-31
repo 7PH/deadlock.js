@@ -72,7 +72,8 @@ export class DeadLockJS {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
         //app.use(cookieParser());
-        app.use(express.static(path.join(__dirname, 'public')));
+        if (api.static)
+            app.use(express.static(path.join(__dirname, api.static)));
 
 
         // attach the API here

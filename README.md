@@ -16,8 +16,6 @@ The easiest way to install deadlockjs is with [`npm`][npm].
 npm i --save deadlockjs
 ```
 
-
-
 ## Features
 
 All these features are optional. See examples below 
@@ -38,10 +36,6 @@ All these features are optional. See examples below
 - [ ] Logs
 - [ ] Internal statistics
 - [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
-
-## Known issues
-- [ ] Rate limit are handled per process. If you set up a 1 rqt/sec rate limit and 4 workers, in the worst case scenario, one could send 4 requests per second (each on a distinct worker)
-
 
 ## Dependencies
 This library uses io-filter to validate request body
@@ -91,6 +85,9 @@ import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
 const api: APIDescription = {
     appSecret: '',
     workers: 4,
+    cors: {
+        origin: "http://localhost:3000"
+    },
     port: 3000,
     db: {
         mysql: {

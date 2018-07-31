@@ -13,6 +13,9 @@ export interface APIDescription {
     /** cors options */
     cors?: cors.CorsOptions;
 
+    /** path to static files */
+    static?: string;
+
     /** amount of workers */
     workers: number;
 
