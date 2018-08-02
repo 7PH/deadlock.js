@@ -1,4 +1,4 @@
-import {APIDescription, APIEndPoint} from "../../../";
+import {APIDescription, APIEndPoint, RequestLocal} from "../../../";
 import * as express from "express";
 import {Preprocessor} from "./preprocessor/Preprocessor";
 import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
@@ -116,24 +116,34 @@ export class RequestWrapper implements IRequestWrapper {
             }
 
             // handling request
-            let result: any;
+            let data: string;
 
             if (endPoint.cache != null) {
+
                 let expire: number = (endPoint.cache || this.api.cache || {expire: 1000}).expire;
-                result = await this.cache.get(
-                    endPoint,
-                    expire,
-                    endPoint.handler.bind(this, res.locals.dl));
+
+                // fetch the result with cache
+                data = await this.cache.get<string>(endPoint, expire, this.getData.bind(this, endPoint, res.locals.dl));
             } else {
-                result = await endPoint.handler(res.locals.dl);
+
+                // fetch the result without cache
+                data = await this.getData(endPoint, res.locals.dl);
             }
 
-            // result output
-            if (result == null) result = {};
-            res.json({error: undefined, data: result});
+            // send back the result
+            res.type('application/json');
+            res.send(data);
         } catch (e) {
+
             // error occurred during loading or request
             res.json({error: {message: e.message}});
         }
+    }
+
+    public async getData(endPoint: APIEndPoint, dl: RequestLocal): Promise<string> {
+
+        let data: any = await endPoint.handler(dl);
+
+        return JSON.stringify({ data });
     }
 }
