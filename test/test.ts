@@ -9,48 +9,42 @@ const PATH: string = '/api/test';
 let counter: number = 1;
 
 const api: APIDescription = {
-    workers: 1,
-    cors: {
-        origin: 'http://localhost:3000'
-    },
+
     hostname: HOST,
     port: PORT,
+    basePath: PATH,
+
     root: {
-        middleware: [],
-        path: PATH,
-        routes: [
+
+        routes: {
 
             // test suite 1
-            {
+            '/': {
                 method: 'get',
                 handler: async () => ({ a: 1 })
             },
 
             // test suite 2
-            {
-                path: '/get1',
+            '/get1': {
                 method: 'get',
                 handler: async () => ({ a: 2 })
             },
-            {
-                path: '/get2',
+            '/get2': {
                 method: 'get',
                 handler: async () => { (<any>{}).x.y = 1; return 2; }
             },
-            {
-                path: '/post1',
+            '/post1': {
                 method: 'post',
                 handler: async () => ({ a: 3 })
             },
 
             // test suite 3
-            {
-                path: '/get3',
+            '/get3': {
                 method: 'get',
                 cache: { expire: 500 },
                 handler: async () => counter ++
             }
-        ]
+        }
     }
 };
 

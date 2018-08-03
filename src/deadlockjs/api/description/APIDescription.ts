@@ -13,6 +13,8 @@ export interface APIDescription {
     /** cors options */
     cors?: cors.CorsOptions;
 
+    verbose?: boolean;
+
     ssl?: {
         cert: Buffer;
         key: Buffer;
@@ -21,8 +23,11 @@ export interface APIDescription {
     /** path to static files */
     static?: string;
 
+    /** base path of the api */
+    basePath?: string;
+
     /** amount of workers */
-    workers: number;
+    workers?: number;
 
     /** ip blacklist */
     ipBlacklist?: Array<string>;

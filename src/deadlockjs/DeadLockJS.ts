@@ -23,7 +23,8 @@ export class DeadLockJS {
     public static startApp(api: APIDescription): Promise<spdy.Server> {
         if (cluster.isMaster) {
             // spawns workers
-            for (let i = 0; i < api.workers - 1; i ++)
+            const workers = api.workers || 1;
+            for (let i = 0; i < workers - 1; i ++)
                 cluster.fork();
         }
 
@@ -111,7 +112,7 @@ export class DeadLockJS {
         return this.buildRouterForRoutes(
             api,
             new RequestWrapper(api),
-            [api.root],
+            {[api.basePath || '/']: api.root},
             api.root,
             '',
             0);
@@ -127,7 +128,7 @@ export class DeadLockJS {
      * @param {number} depth Current depth of router
      * @returns {e.Router}
      */
-    private static buildRouterForRoutes(api: APIDescription, wrapper: RequestWrapper, routes: Array<APIDirectory | APIEndPoint>, parent: APIDirectory, path: string, depth: number): express.Router {
+    private static buildRouterForRoutes(api: APIDescription, wrapper: RequestWrapper, routes: {[path: string]: APIDirectory | APIEndPoint}, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
         const router: express.Router = express.Router({mergeParams: true});
 
@@ -136,8 +137,8 @@ export class DeadLockJS {
             router.use(DeadLockJS.buildMiddleware(parent.middleware));
 
         // attach directory routes
-        for (let i in routes) {
-            const route: APIDirectory | APIEndPoint = routes[i];
+        for (const routePath in routes) {
+            const route: APIDirectory | APIEndPoint = routes[routePath];
 
             if (typeof (route as APIDirectory).routes === 'undefined') {
 
@@ -145,9 +146,10 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
 
-                // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
+                if (api.verbose)
+                    console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path + routePath));
                 let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
-                router[(route as APIEndPoint).method]((route as APIEndPoint).path || '/', handler);
+                router[(route as APIEndPoint).method](routePath, handler);
 
             } else {
 
@@ -156,9 +158,10 @@ export class DeadLockJS {
                  *   One jobexecutor or more can be attached to a directory
                  */
 
-                //console.log(path + (route as APIDirectory).path + " (directory)");
-                let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
-                router.use((route as APIDirectory).path, subRouter);
+                if (api.verbose)
+                    console.log(path + routePath + " (directory)");
+                let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + routePath, depth + 1);
+                router.use(routePath, subRouter);
             }
         }
         return router;
@@ -173,7 +176,7 @@ export class DeadLockJS {
      */
     public static endPointToString(api: APIDescription, endPoint: APIEndPoint, path: string): string {
         let s: string = "";
-        s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path + endPoint.path;
+        s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path;
         if (typeof api.rateLimit !== 'undefined') {
             let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
             let rqtPerSec = api.rateLimit.maxWeightPerSec / weight;

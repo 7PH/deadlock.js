@@ -46,16 +46,15 @@ Here is a simple working example, without database connection and rate limit:
 import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 
 const api: APIDescription = {
-    workers: 4,
     port: 3000,
     root: {
-        path: '/api/v1',
-        routes: [
-            {
+        path: '/api',
+        routes: {
+            '/': {
                 method: 'get',
                 handler: async () => ({a: 42})
             }
-        ]
+        }
     }
 };
 
@@ -100,15 +99,14 @@ const api: APIDescription = {
         /** default expire time */
         expire: 2000
     },
+    basePath: '/api/v1',
     root: {
-        path: '/api/v1',
         middleware: async (req: express.Request, res: express.Response) => {
             if (Math.random() < 0.5)
                 throw new Error("Not allowed");
         },
-        routes: [
-            {
-                path: '/login',
+        routes: {
+            '/login': {
                 method: 'post',
                 rateLimit: {weight: 80},
                 paramFilter: new ObjectFilter({
@@ -126,7 +124,7 @@ const api: APIDescription = {
                     return {a: Math.random()};
                 }
             }
-        ]
+        }
     }
 };
 

@@ -6,9 +6,6 @@ import {RateLimiterConfigOverride} from "../jobexecutor";
 /** An API end-point is an application entry point */
 export interface APIEndPoint {
 
-    /** relative path of this end-point */
-    path?: string;
-
     /** method to use */
     method: 'get' | 'post' | 'put' | 'delete';
 
