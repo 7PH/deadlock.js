@@ -73,7 +73,6 @@ import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs
 import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
 
 const api: APIDescription = {
-    appSecret: 'c416c7191a40ee5db3c451cbd3a10f22',
     workers: 4,
     cors: {
         origin: "http://localhost:3000"
@@ -134,14 +133,4 @@ const api: APIDescription = {
 DeadLockJS.startApp(api);
 ```
 
-Therefore, I would strongly suggest to make controller handlers into separate files.
-
-Keep in mind that each worker will allocate a MySQL Pool with 'connectionLimit' connections.
-
-Also, the appSecret has no use at the moment but it will be used later to handle interactions with the web server, such as retrieving logs, statistics, editing configuration. There will be a cooldown for appSecret authentication, but you should use a secure one.
-
-## See also
-
-I made another library to handle caching promises
-
-@SEE https://github.com/7PH/Promise-Caching
+Each worker will allocate a MySQL Pool with 'connectionLimit' connections.
