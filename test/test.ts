@@ -1,4 +1,4 @@
-import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "../src";
+import {APIDescription, DeadLockJS} from "../src";
 import * as request from "request-promise-native"
 
 const HOST: string = 'localhost';
@@ -14,20 +14,20 @@ const api: APIDescription = {
     hostname: HOST,
     port: PORT,
     root: {
-        kind: APIRouteType.DIRECTORY,
+        kind: 'directory',
         middleware: [],
         path: PATH,
         routes: [
 
             // test suite 1
             {
-                kind: APIRouteType.END_POINT,
+                kind: 'endpoint',
                 path: '/get1',
                 method: 'get',
                 handler: async () => ({ a: 2 })
             },
             {
-                kind: APIRouteType.END_POINT,
+                kind: 'endpoint',
                 path: '/post1',
                 method: 'post',
                 handler: async () => ({ a: 3 })
@@ -35,7 +35,7 @@ const api: APIDescription = {
 
             // test suite 2
             {
-                kind: APIRouteType.END_POINT,
+                kind: 'endpoint',
                 path: '/get2',
                 method: 'get',
                 cache: { expire: 1000 },
