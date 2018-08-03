@@ -1,18 +1,17 @@
 import {APIDescription, APIEndPoint, RequestLocal} from "../../../";
 import * as express from "express";
-import {Preprocessor} from "./preprocessor/Preprocessor";
-import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
-import {MySQLCleaner} from "./preprocessor/MySQLCleaner";
-import {MySQLProvider} from "./preprocessor/MySQLProvider";
+import {JobExecutor} from "../jobexecutor/JobExecutor";
+import {RequestBodyChecker} from "../jobexecutor/RequestBodyChecker";
+import {MySQLCleaner} from "../jobexecutor/MySQLCleaner";
+import {MySQLProvider} from "../jobexecutor/MySQLProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
-import {RateLimiter} from "./preprocessor/RateLimiter";
-import {RequestInitializer} from "./preprocessor/RequestInitializer";
-import {GateKeeper} from "./preprocessor/GateKeeper";
-import {PromiseCaching} from "promise-caching";
-import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
-import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
-import {CacheHandler} from "./preprocessor/CacheHandler";
-import {RequestHandler} from "./preprocessor/RequestHandler";
+import {RateLimiter} from "../jobexecutor/RateLimiter";
+import {RequestInitializer} from "../jobexecutor/RequestInitializer";
+import {GateKeeper} from "../jobexecutor/GateKeeper";
+import {MongoDBProvider} from "../jobexecutor/MongoDBProvider";
+import {MongoDBCleaner} from "../jobexecutor/MongoDBCleaner";
+import {CacheHandler} from "../jobexecutor/CacheHandler";
+import {RequestHandler} from "../jobexecutor/RequestHandler";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -30,9 +29,9 @@ export class RequestWrapper implements IRequestWrapper {
      *      p = [[a, b], [c, d]]
      *          a, b will be executed in parallel.
      *          THEN, if all resolves, c and d will be executed in parallel
-     * @type {Array<Array<Preprocessor>>}
+     * @type {Array<Array<JobExecutor>>}
      */
-    public readonly preprocessors: Array<Array<Preprocessor>> = [];
+    public readonly jobs: Array<Array<JobExecutor>> = [];
 
     /**
      * @param cache
@@ -44,7 +43,7 @@ export class RequestWrapper implements IRequestWrapper {
          * constraints:
          *  - database cleaner should be executed before database allocators
          */
-        this.preprocessors = [
+        this.jobs = [
             [
                 new RequestInitializer()
             ],
@@ -72,7 +71,7 @@ export class RequestWrapper implements IRequestWrapper {
         // no job to do
         if (jobs.length === 0) return Promise.resolve();
 
-        // foreach preprocessor list
+        // foreach jobexecutor list
         for (const job of jobs) {
 
             // execute a bunch of them in parallel
@@ -87,7 +86,7 @@ export class RequestWrapper implements IRequestWrapper {
         return;
     }
 
-    private preprocessorsToPromiseGenerator(preprocessors: Preprocessor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
+    private preprocessorsToPromiseGenerator(preprocessors: JobExecutor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
         return preprocessors.map(p => p.preprocess.bind(p, endPoint, req, res));
     }
 
@@ -102,7 +101,7 @@ export class RequestWrapper implements IRequestWrapper {
     public async wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction) {
 
         // building promises of promises
-        const promises: (() => Promise<any>)[][] = this.preprocessors.map(
+        const promises: (() => Promise<any>)[][] = this.jobs.map(
             preprocessors => {
                 return this.preprocessorsToPromiseGenerator(preprocessors, endPoint, req, res);
             }
@@ -116,7 +115,7 @@ export class RequestWrapper implements IRequestWrapper {
             if (typeof endPoint.middlewares !== 'undefined')
                 await Promise.all(endPoint.middlewares.map(middleware => middleware(req, res)));
 
-            // meaning that one of the preprocessor wanted to terminate the request
+            // meaning that one of the jobexecutor wanted to terminate the request
             if (typeof result !== 'undefined') {
 
                 const data: string = typeof result === 'string' ? result : JSON.stringify({data: result});
@@ -125,7 +124,7 @@ export class RequestWrapper implements IRequestWrapper {
                 return;
             }
             
-            // not supposed to happen because the last preprocessor always return a value
+            // not supposed to happen because the last jobexecutor always return a value
             throw new Error("Unexpected end of file");
         } catch (e) {
 

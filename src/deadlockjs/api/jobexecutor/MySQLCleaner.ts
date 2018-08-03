@@ -1,9 +1,9 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIEndPoint} from "../../../../";
+import {JobExecutor} from "./JobExecutor";
+import {APIEndPoint} from "../../../index";
 import * as express from "express";
 import {PoolConnection} from "mysql";
 
-export class MySQLCleaner implements Preprocessor {
+export class MySQLCleaner implements JobExecutor {
 
     public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 

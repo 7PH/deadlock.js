@@ -123,7 +123,7 @@ export class DeadLockJS {
         // builds the current directory router
         const router: express.Router = express.Router({mergeParams: true});
 
-        // attach the preprocessor(s)
+        // attach the jobexecutor(s)
         if (parent.middleware != null && depth > 0)
             router.use(DeadLockJS.buildMiddleware(parent.middleware));
 
@@ -135,7 +135,7 @@ export class DeadLockJS {
 
                 /**
                  * A directory is a list of routes (which can be directory themselves or end point (get, post, .. handlers)
-                 *   One preprocessor or more can be attached to a directory
+                 *   One jobexecutor or more can be attached to a directory
                  */
                 case 'directory':
                     // output new path

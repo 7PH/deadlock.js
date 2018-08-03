@@ -10,7 +10,7 @@ export interface APIDirectory extends APIRoute {
     /** relative path to the sub-directory */
     path: string;
 
-    /** one preprocessor or more */
+    /** one jobexecutor or more */
     middleware?: APIMiddleware[];
 
     /** routes (can be directory themselves ) */

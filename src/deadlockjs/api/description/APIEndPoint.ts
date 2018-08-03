@@ -18,7 +18,7 @@ export interface APIEndPoint extends APIRoute {
     /** will handle the request */
     handler: APIEndPointHandler;
 
-    /** custom preprocessors */
+    /** custom jobs */
     middlewares?: APIMiddleware[];
 
     /** if you want to ensure request body is filled with valid data, use a valid MaskFilter here */

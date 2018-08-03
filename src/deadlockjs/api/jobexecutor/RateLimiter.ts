@@ -1,7 +1,7 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIDescription, APIEndPoint} from "../../../../";
+import {JobExecutor} from "./JobExecutor";
+import {APIDescription, APIEndPoint} from "../../../index";
 import * as express from "express";
-import Timer = NodeJS.Timer;
+import {sleep} from "../util/funcs";
 
 
 
@@ -26,7 +26,7 @@ export interface RateLimiterConfigOverride {
 /**
  * The RateLimiter limits the number of requests which can be made to the API
  */
-export class RateLimiter implements Preprocessor {
+export class RateLimiter implements JobExecutor {
 
     /**
      * Default RateLimiter configuration
