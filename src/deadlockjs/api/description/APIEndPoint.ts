@@ -1,7 +1,7 @@
 import * as iof from "io-filter";
-import {RateLimiterConfigOverride} from "../../..";
 import {APIEndPointHandler} from "./APIEndPointHandler";
 import {APIMiddleware} from "./APIMiddleware";
+import {RateLimiterConfigOverride} from "../jobexecutor";
 
 /** An API end-point is an application entry point */
 export interface APIEndPoint {
