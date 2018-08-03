@@ -46,7 +46,6 @@ Here is a simple working example, without database connection and rate limit:
 import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 
 const api: APIDescription = {
-    appSecret: '',
     workers: 4,
     port: 3000,
     root: {
@@ -74,7 +73,7 @@ import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs
 import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
 
 const api: APIDescription = {
-    appSecret: '',
+    appSecret: 'c416c7191a40ee5db3c451cbd3a10f22',
     workers: 4,
     cors: {
         origin: "http://localhost:3000"

@@ -1,5 +1,6 @@
-import {APIDescription, DeadLockJS} from "../src";
+import {APIDescription} from "../src";
 import * as request from "request-promise-native"
+import {DeadLockJS} from "../src/deadlockjs/DeadLockJS";
 
 const HOST: string = 'localhost';
 const PORT: number = 48654;
@@ -8,7 +9,6 @@ const PATH: string = '/api/test';
 let counter: number = 1;
 
 const api: APIDescription = {
-    appSecret: '',
     workers: 1,
     cors: {
         origin: 'http://localhost:3000'
