@@ -150,7 +150,7 @@ export class DeadLockJS {
 
                 // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
                 let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
-                router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
+                router[(route as APIEndPoint).method]((route as APIEndPoint).path || '/', handler);
 
             } else {
 
