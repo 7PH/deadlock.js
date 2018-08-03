@@ -18,12 +18,6 @@ export interface APIEndPoint extends APIRoute {
     /** will handle the request */
     handler: APIEndPointHandler;
 
-    /** timing attacks prevention */
-    timingAttack?: {
-        minDelay: number;
-        maxDelay: number;
-    };
-
     /** custom preprocessors */
     middlewares?: APIMiddleware[];
 
