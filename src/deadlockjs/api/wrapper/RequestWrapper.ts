@@ -149,7 +149,8 @@ export class RequestWrapper implements IRequestWrapper {
         } catch (e) {
 
             // error occurred during loading or request
-            res.json({error: {message: e.message}});
+            res.status(500);
+            res.json({error: {message: e.message, code: 500}});
         }
     }
 }

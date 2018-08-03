@@ -20,17 +20,22 @@ const api: APIDescription = {
         path: PATH,
         routes: [
 
-            // default path
+            // test suite 1
             {
                 method: 'get',
                 handler: async () => ({ a: 1 })
             },
 
-            // test suite 1
+            // test suite 2
             {
                 path: '/get1',
                 method: 'get',
                 handler: async () => ({ a: 2 })
+            },
+            {
+                path: '/get2',
+                method: 'get',
+                handler: async () => { (<any>{}).x.y = 1; return 2; }
             },
             {
                 path: '/post1',
@@ -38,9 +43,9 @@ const api: APIDescription = {
                 handler: async () => ({ a: 3 })
             },
 
-            // test suite 2
+            // test suite 3
             {
-                path: '/get2',
+                path: '/get3',
                 method: 'get',
                 cache: { expire: 500 },
                 handler: async () => counter ++
@@ -83,9 +88,9 @@ describe('DeadLockJS test', function () {
         });
 
         /** Default path 2 */
-        it('default path should ONLY be \'/\'', async function () {
-            const url: string = this.baseUrl + '/thisdonotexist';
-            let result: any = JSON.parse(await request.get(url, { simple: false }));
+        it('default path should be \'/\'', async function () {
+            const url: string = this.baseUrl + "/nopenopenope";
+            let result: any = JSON.parse(await request.get(url, {simple: false}));
             if (! result || ! result.error || result.error.code !== 404)
                 throw new Error("Wrong response");
         });
@@ -99,6 +104,14 @@ describe('DeadLockJS test', function () {
             const url: string = this.baseUrl + 'get1';
             let result: any = JSON.parse(await request.get(url));
             if (!result || !result.data || !result.data.a || result.data.a !== 2)
+                throw new Error("Wrong response");
+        });
+
+        /** 500 error */
+        it('status 500', async function () {
+            const url: string = this.baseUrl + 'get2';
+            let result: any = JSON.parse(await request.get(url, {simple: false}));
+            if (! result || ! result.error || result.error.code !== 500)
                 throw new Error("Wrong response");
         });
 
@@ -118,7 +131,7 @@ describe('DeadLockJS test', function () {
 
             this.slow(3000);
 
-            const url: string = this.baseUrl + 'get2';
+            const url: string = this.baseUrl + 'get3';
 
             let result: any = JSON.parse(await request.get(url));
 
