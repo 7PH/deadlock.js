@@ -1,5 +1,5 @@
 import {APIDescription, APIEndPoint, RequestLocal} from "../../../";
-import * as express from "express";
+import {Request, Response, NextFunction} from "express";
 import {JobExecutor} from "../jobexecutor/JobExecutor";
 import {RequestBodyChecker} from "../jobexecutor/RequestBodyChecker";
 import {MySQLCleaner} from "../jobexecutor/MySQLCleaner";
@@ -67,15 +67,36 @@ export class RequestWrapper implements IRequestWrapper {
         ];
     }
 
-    private async chainParallelPromises(jobs: PromiseGenerator<any>[][]): Promise<any> {
+    /**
+     * Get generators out of the job executors and the request parameters
+     * @param {APIEndPoint} endPoint
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @returns {PromiseGenerator<any>[][]}
+     */
+    private getGenerators(endPoint: APIEndPoint, req: Request, res: Response): PromiseGenerator<any>[][] {
+        return this.jobs.map(bunchOfJob =>
+                bunchOfJob.map(job =>
+                    () =>
+                        job.preprocess(endPoint, req, res)
+                )
+            );
+    }
+
+    /**
+     * Chain parallel tasks
+     * @param {PromiseGenerator<any>[][]} generators
+     * @returns {Promise<any>}
+     */
+    private async chainParallelJobs(generators: PromiseGenerator<any>[][]): Promise<any> {
         // no job to do
-        if (jobs.length === 0) return Promise.resolve();
+        if (generators.length === 0) return Promise.resolve();
 
         // foreach jobexecutor list
-        for (const job of jobs) {
+        for (const bunch of generators) {
 
             // execute a bunch of them in parallel
-            let results: any[] = await Promise.all(job.map(j => j()));
+            let results: any[] = await Promise.all(bunch.map(bunch => bunch()));
 
             // does one of them ask for request termination?
             for (const result of results)
@@ -86,8 +107,15 @@ export class RequestWrapper implements IRequestWrapper {
         return;
     }
 
-    private preprocessorsToPromiseGenerator(preprocessors: JobExecutor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
-        return preprocessors.map(p => p.preprocess.bind(p, endPoint, req, res));
+    /**
+     * Execute job executors as chain of parallel jobs
+     * @param {APIEndPoint} endPoint
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @returns {Promise<any>}
+     */
+    private executeGenerators(endPoint: APIEndPoint, req: Request, res: Response): Promise<any> {
+        return this.chainParallelJobs(this.getGenerators(endPoint, req, res));
     }
 
     /**
@@ -96,20 +124,12 @@ export class RequestWrapper implements IRequestWrapper {
      * @param {e.Request} req
      * @param {e.Response} res
      * @param {NextFunction} next
-     * @TODO Refactor
      */
-    public async wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction) {
-
-        // building promises of promises
-        const promises: (() => Promise<any>)[][] = this.jobs.map(
-            preprocessors => {
-                return this.preprocessorsToPromiseGenerator(preprocessors, endPoint, req, res);
-            }
-        );
+    public async wrap(endPoint: APIEndPoint, req: Request, res: Response, next: NextFunction) {
 
         try {
-            // preprocess
-            let result: any = await this.chainParallelPromises(promises);
+            // execute jobs
+            let result: any = await this.executeGenerators(endPoint, req, res);
 
             // custom middle
             if (typeof endPoint.middlewares !== 'undefined')
