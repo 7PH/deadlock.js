@@ -1,9 +1,9 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIEndPoint} from "../../../../";
+import {JobExecutor} from "./JobExecutor";
+import {APIEndPoint} from "../../../index";
 import * as express from "express";
 import {MongoClient} from "mongodb";
 
-export class MongoDBCleaner implements Preprocessor {
+export class MongoDBCleaner implements JobExecutor {
 
     /**
      *

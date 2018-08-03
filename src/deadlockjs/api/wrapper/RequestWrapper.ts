@@ -1,18 +1,17 @@
 import {APIDescription, APIEndPoint, RequestLocal} from "../../../";
-import * as express from "express";
-import {Preprocessor} from "./preprocessor/Preprocessor";
-import {RequestBodyChecker} from "./preprocessor/RequestBodyChecker";
-import {MySQLCleaner} from "./preprocessor/MySQLCleaner";
-import {MySQLProvider} from "./preprocessor/MySQLProvider";
+import {Request, Response, NextFunction} from "express";
+import {JobExecutor} from "../jobexecutor/JobExecutor";
+import {RequestBodyChecker} from "../jobexecutor/RequestBodyChecker";
+import {MySQLCleaner} from "../jobexecutor/MySQLCleaner";
+import {MySQLProvider} from "../jobexecutor/MySQLProvider";
 import {IRequestWrapper} from "./IRequestWrapper";
-import {RateLimiter} from "./preprocessor/RateLimiter";
-import {RequestInitializer} from "./preprocessor/RequestInitializer";
-import {GateKeeper} from "./preprocessor/GateKeeper";
-import {PromiseCaching} from "promise-caching";
-import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
-import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
-import {CacheHandler} from "./preprocessor/CacheHandler";
-import {RequestHandler} from "./preprocessor/RequestHandler";
+import {RateLimiter} from "../jobexecutor/RateLimiter";
+import {RequestInitializer} from "../jobexecutor/RequestInitializer";
+import {GateKeeper} from "../jobexecutor/GateKeeper";
+import {MongoDBProvider} from "../jobexecutor/MongoDBProvider";
+import {MongoDBCleaner} from "../jobexecutor/MongoDBCleaner";
+import {CacheHandler} from "../jobexecutor/CacheHandler";
+import {RequestHandler} from "../jobexecutor/RequestHandler";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -30,9 +29,9 @@ export class RequestWrapper implements IRequestWrapper {
      *      p = [[a, b], [c, d]]
      *          a, b will be executed in parallel.
      *          THEN, if all resolves, c and d will be executed in parallel
-     * @type {Array<Array<Preprocessor>>}
+     * @type {Array<Array<JobExecutor>>}
      */
-    public readonly preprocessors: Array<Array<Preprocessor>> = [];
+    public readonly jobs: Array<Array<JobExecutor>> = [];
 
     /**
      * @param cache
@@ -44,7 +43,7 @@ export class RequestWrapper implements IRequestWrapper {
          * constraints:
          *  - database cleaner should be executed before database allocators
          */
-        this.preprocessors = [
+        this.jobs = [
             [
                 new RequestInitializer()
             ],
@@ -68,15 +67,36 @@ export class RequestWrapper implements IRequestWrapper {
         ];
     }
 
-    private async chainParallelPromises(jobs: PromiseGenerator<any>[][]): Promise<any> {
-        // no job to do
-        if (jobs.length === 0) return Promise.resolve();
+    /**
+     * Get generators out of the job executors and the request parameters
+     * @param {APIEndPoint} endPoint
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @returns {PromiseGenerator<any>[][]}
+     */
+    private getGenerators(endPoint: APIEndPoint, req: Request, res: Response): PromiseGenerator<any>[][] {
+        return this.jobs.map(bunchOfJob =>
+                bunchOfJob.map(job =>
+                    () =>
+                        job.preprocess(endPoint, req, res)
+                )
+            );
+    }
 
-        // foreach preprocessor list
-        for (const job of jobs) {
+    /**
+     * Chain parallel tasks
+     * @param {PromiseGenerator<any>[][]} generators
+     * @returns {Promise<any>}
+     */
+    private async chainParallelJobs(generators: PromiseGenerator<any>[][]): Promise<any> {
+        // no job to do
+        if (generators.length === 0) return Promise.resolve();
+
+        // foreach jobexecutor list
+        for (const bunch of generators) {
 
             // execute a bunch of them in parallel
-            let results: any[] = await Promise.all(job.map(j => j()));
+            let results: any[] = await Promise.all(bunch.map(bunch => bunch()));
 
             // does one of them ask for request termination?
             for (const result of results)
@@ -87,8 +107,15 @@ export class RequestWrapper implements IRequestWrapper {
         return;
     }
 
-    private preprocessorsToPromiseGenerator(preprocessors: Preprocessor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
-        return preprocessors.map(p => p.preprocess.bind(p, endPoint, req, res));
+    /**
+     * Execute job executors as chain of parallel jobs
+     * @param {APIEndPoint} endPoint
+     * @param {e.Request} req
+     * @param {e.Response} res
+     * @returns {Promise<any>}
+     */
+    private executeGenerators(endPoint: APIEndPoint, req: Request, res: Response): Promise<any> {
+        return this.chainParallelJobs(this.getGenerators(endPoint, req, res));
     }
 
     /**
@@ -97,26 +124,18 @@ export class RequestWrapper implements IRequestWrapper {
      * @param {e.Request} req
      * @param {e.Response} res
      * @param {NextFunction} next
-     * @TODO Refactor
      */
-    public async wrap(endPoint: APIEndPoint, req: express.Request, res: express.Response, next: express.NextFunction) {
-
-        // building promises of promises
-        const promises: (() => Promise<any>)[][] = this.preprocessors.map(
-            preprocessors => {
-                return this.preprocessorsToPromiseGenerator(preprocessors, endPoint, req, res);
-            }
-        );
+    public async wrap(endPoint: APIEndPoint, req: Request, res: Response, next: NextFunction) {
 
         try {
-            // preprocess
-            let result: any = await this.chainParallelPromises(promises);
+            // execute jobs
+            let result: any = await this.executeGenerators(endPoint, req, res);
 
             // custom middle
             if (typeof endPoint.middlewares !== 'undefined')
                 await Promise.all(endPoint.middlewares.map(middleware => middleware(req, res)));
 
-            // meaning that one of the preprocessor wanted to terminate the request
+            // meaning that one of the jobexecutor wanted to terminate the request
             if (typeof result !== 'undefined') {
 
                 const data: string = typeof result === 'string' ? result : JSON.stringify({data: result});
@@ -125,7 +144,7 @@ export class RequestWrapper implements IRequestWrapper {
                 return;
             }
             
-            // not supposed to happen because the last preprocessor always return a value
+            // not supposed to happen because the last jobexecutor always return a value
             throw new Error("Unexpected end of file");
         } catch (e) {
 

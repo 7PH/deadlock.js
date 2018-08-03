@@ -1,9 +1,9 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIDescription, APIEndPoint, RequestLocal} from "../../../..";
+import {JobExecutor} from "./JobExecutor";
+import {APIDescription, APIEndPoint, RequestLocal} from "../../../index";
 import * as e from "express";
 import {PromiseCaching} from "promise-caching";
 
-export class CacheHandler implements Preprocessor {
+export class CacheHandler implements JobExecutor {
 
     private cache: PromiseCaching = new PromiseCaching({returnExpired: false});
 

@@ -30,8 +30,8 @@ All these features are optional. See examples below
 - [X] MongoDB support
 - [X] File upload
 - [X] CORS management
-- [ ] HTTP2 Support
-- [ ] TLS Support
+- [X] HTTP2 Support
+- [X] HTTPS Support
 - [ ] Logs
 - [ ] Internal statistics
 - [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)

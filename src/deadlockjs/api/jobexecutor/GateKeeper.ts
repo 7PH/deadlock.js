@@ -1,8 +1,8 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIDescription, APIEndPoint} from "../../../../";
+import {JobExecutor} from "./JobExecutor";
+import {APIDescription, APIEndPoint} from "../../../index";
 import * as express from "express";
 
-export class GateKeeper implements Preprocessor {
+export class GateKeeper implements JobExecutor {
 
     private readonly blacklist: Array<string> = [];
 

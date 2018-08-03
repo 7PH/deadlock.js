@@ -1,8 +1,8 @@
-import {Preprocessor} from "./Preprocessor";
+import {JobExecutor} from "./JobExecutor";
 import * as express from "express";
-import {APIEndPoint} from "../../../../";
+import {APIEndPoint} from "../../../index";
 
-export class RequestInitializer implements Preprocessor {
+export class RequestInitializer implements JobExecutor {
 
 
     public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {

@@ -76,7 +76,7 @@ describe('DeadLockJS test', function () {
         it('get', async function () {
             const url: string = this.baseUrl + 'get1';
             let result: any = JSON.parse(await request.get(url));
-            if (! result || ! result.data || ! result.data.a || result.data.a !== 2)
+            if (!result || !result.data || !result.data.a || result.data.a !== 2)
                 throw new Error("GET error");
         });
 
@@ -123,6 +123,7 @@ describe('DeadLockJS test', function () {
             if (result.data === oldRand)
                 throw new Error("Unexpected cache hit");
         });
+
     })
 
 });

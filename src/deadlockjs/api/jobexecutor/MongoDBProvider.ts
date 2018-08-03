@@ -1,10 +1,10 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIDescription, APIEndPoint} from "../../../..";
+import {JobExecutor} from "./JobExecutor";
+import {APIDescription, APIEndPoint} from "../../../index";
 import * as express from "express";
 import {MongoClient} from "mongodb";
 
 
-export class MongoDBProvider implements Preprocessor {
+export class MongoDBProvider implements JobExecutor {
 
 
     private readonly activated: boolean = false;

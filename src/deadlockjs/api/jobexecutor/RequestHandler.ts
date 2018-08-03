@@ -1,9 +1,9 @@
-import {Preprocessor} from "./Preprocessor";
-import {APIEndPoint} from "../../../..";
+import {JobExecutor} from "./JobExecutor";
+import {APIEndPoint} from "../../../index";
 import * as e from "express";
-import {APIDescription} from "../../../..";
+import {APIDescription} from "../../../index";
 
-export class RequestHandler implements Preprocessor {
+export class RequestHandler implements JobExecutor {
 
     constructor(private readonly api: APIDescription) { }
 
