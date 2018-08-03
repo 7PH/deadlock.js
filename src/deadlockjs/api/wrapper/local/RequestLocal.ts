@@ -28,4 +28,7 @@ export interface RequestLocal {
         /** POST param (parsed) */
         params: any;
     };
+
+    /** Optional cache update @see CacheHandler */
+    cacheUpdate?: any;
 }

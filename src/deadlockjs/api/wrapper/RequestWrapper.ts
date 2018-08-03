@@ -12,6 +12,7 @@ import {PromiseCaching} from "promise-caching";
 import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
 import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
 import {CacheHandler} from "./preprocessor/CacheHandler";
+import {RequestHandler} from "./preprocessor/RequestHandler";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -60,6 +61,9 @@ export class RequestWrapper implements IRequestWrapper {
             [
                 new MySQLProvider(api),
                 new MongoDBProvider(api),
+            ],
+            [
+                new RequestHandler(api)
             ]
         ];
     }
@@ -120,21 +124,13 @@ export class RequestWrapper implements IRequestWrapper {
                 res.send(data);
                 return;
             }
-
-            // handle request
-            res.type('application/json');
-            res.send(await this.getData(endPoint, res.locals.dl));
+            
+            // not supposed to happen because the last preprocessor always return a value
+            throw new Error("Unexpected end of file");
         } catch (e) {
 
             // error occurred during loading or request
             res.json({error: {message: e.message}});
         }
-    }
-
-    public async getData(endPoint: APIEndPoint, dl: RequestLocal): Promise<string> {
-
-        let data: any = await endPoint.handler(dl);
-
-        return JSON.stringify({ data });
     }
 }

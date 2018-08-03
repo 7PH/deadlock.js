@@ -5,6 +5,8 @@ const HOST: string = 'localhost';
 const PORT: number = 48654;
 const PATH: string = '/api/test';
 
+let counter: number = 1;
+
 const api: APIDescription = {
     appSecret: '',
     workers: 1,
@@ -38,8 +40,8 @@ const api: APIDescription = {
                 kind: 'endpoint',
                 path: '/get2',
                 method: 'get',
-                cache: { expire: 1000 },
-                handler: async () => Math.random()
+                cache: { expire: 500 },
+                handler: async () => counter ++
             }
         ]
     }
