@@ -4,24 +4,27 @@ import * as express from "express";
 import {MongoClient} from "mongodb";
 
 export class MongoDBCleaner implements Preprocessor {
-    public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
-        return new Promise<void>((resolve) => {
-            if (endPoint.db && endPoint.db.mongodb) {
-                res.on('close', this.closeMongoDBConnection.bind(this, res));
-                res.on('finish', this.closeMongoDBConnection.bind(this, res));
-            }
-            resolve();
-        });
+
+    /**
+     *
+     * @param endPoint
+     * @param req
+     * @param res
+     */
+    public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+
+        if (endPoint.db && endPoint.db.mongodb) {
+            res.on('close', async () => this.close(res.locals.dl.mongodb));
+            res.on('finish', async () => this.close(res.locals.dl.mongodb));
+        }
     }
 
     /**
      * Cleans a database connection
-     * @param {express.Response} res
      */
-    private closeMongoDBConnection(res: express.Response): void {
-        const connection: MongoClient | undefined = res.locals.dl.mongodb;
-        if (connection)
-            connection.close();
+    private async close(mongodb: MongoClient): Promise<void> {
+        if (mongodb)
+            await mongodb.close();
     }
 
 }

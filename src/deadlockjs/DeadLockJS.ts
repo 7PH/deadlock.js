@@ -103,7 +103,7 @@ export class DeadLockJS {
     private static buildRouter (api: APIDescription): express.Router {
         return this.buildRouterForRoutes(
             api,
-            new RequestWrapper(new PromiseCaching(), api),
+            new RequestWrapper(api),
             [api.root],
             api.root,
             '',

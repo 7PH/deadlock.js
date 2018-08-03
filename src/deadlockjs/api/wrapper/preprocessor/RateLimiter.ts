@@ -32,9 +32,13 @@ export class RateLimiter implements Preprocessor {
      * Default RateLimiter configuration
      */
     public static readonly DEFAULT_CONFIG: RateLimiterConfig = {
+
         ipWhitelist: [],
+
         weight: 4,
+
         maxWeightPerSec: 1,
+
         maxPending: 1
     };
 
@@ -98,46 +102,51 @@ export class RateLimiter implements Preprocessor {
      * @param {e.Response} res
      * @returns {Promise<void>}
      */
-    public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (! this.activated) return resolve();
-            if (endPoint.rateLimit != null && endPoint.rateLimit.enabled == false) return resolve();
-            if (this.config.ipWhitelist.indexOf(req.connection.remoteAddress || '127.0.0.1') != -1) return resolve();
+    public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
-            // merge configurations
-            let config: any = this.config;
-            if (endPoint.rateLimit) {
-                for (let prop in endPoint.rateLimit) {
-                    if (typeof config[prop] !== 'undefined')
-                        config[prop] = (endPoint.rateLimit as any)[prop];
+        // the module is not activated
+        if (! this.activated) return;
+
+        // the rate limit is not defined for this route
+        if (endPoint.rateLimit != null && endPoint.rateLimit.enabled == false) return;
+
+        // the ip is whitelisted
+        if (this.config.ipWhitelist.indexOf(req.connection.remoteAddress || '127.0.0.1') != -1) return;
+
+        // merge route configuration
+        let config: any = this.config;
+        if (endPoint.rateLimit)
+            for (let prop in endPoint.rateLimit)
+                if (typeof config[prop] !== 'undefined')
+                    config[prop] = (endPoint.rateLimit as any)[prop];
+
+        // get user data
+        const data: {weight: number, pending: number} = this.getClientData(req);
+
+        // user makes too many requests
+        if (data.weight > this.config.maxWeightPerSec) {
+
+            // user makes too many requests + too many are pending....
+            if (data.pending >= this.config.maxPending)
+                throw new Error("Too many requests");
+
+            // user makes too many requests with a few pending
+            // will enter waiting loop
+            ++ data.pending;
+            while (true) {
+                await sleep(500);
+
+                if (data.weight < this.config.maxWeightPerSec) {
+
+                    // at least we can resolve the promise
+                    -- data.pending;
+                    data.weight += this.config.weight;
+                    break;
                 }
             }
+        }
 
-            // get user data
-            const data: {weight: number, pending: number} = this.getClientData(req);
-
-            if (data.weight > this.config.maxWeightPerSec) {
-                // user makes too many requests
-                if (data.pending >= this.config.maxPending) {
-                    // user makes too many requests + too many are pending....
-                    reject(new Error("Too many requests"));
-                } else {
-                    // user makes too many requests with a few pending
-                    ++ data.pending;
-                    let i: Timer = setInterval(() => {
-                        if (data.weight < this.config.maxWeightPerSec) {
-                            -- data.pending;
-                            clearInterval(i);
-                            data.weight += this.config.weight;
-                            resolve();
-                        }
-                    }, 500);
-                }
-            } else {
-                data.weight += this.config.weight;
-                resolve();
-            }
-        });
+        data.weight += this.config.weight;
     }
 
 }
