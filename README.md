@@ -36,11 +36,6 @@ All these features are optional. See examples below
 - [ ] Internal statistics
 - [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
 
-## Dependencies
-This library uses io-filter to validate request body
-
-@SEE https://github.com/7PH/io-filter
-
 ## Examples
 
 ### Hello World
@@ -58,9 +53,8 @@ const api: APIDescription = {
         path: '/api/v1',
         routes: [
             {
-                path: '/',
                 method: 'get',
-                handler: async () => ({a: Math.random()})
+                handler: async () => ({a: 42})
             }
         ]
     }
