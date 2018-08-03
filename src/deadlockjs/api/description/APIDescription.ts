@@ -8,7 +8,7 @@ import * as cors from "cors";
 /** The API description describes the whole API */
 export interface APIDescription {
     /** app secret */
-    appSecret: string;
+    appSecret?: string;
 
     /** cors options */
     cors?: cors.CorsOptions;
