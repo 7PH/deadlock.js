@@ -11,7 +11,6 @@ import {GateKeeper} from "./preprocessor/GateKeeper";
 import {PromiseCaching} from "promise-caching";
 import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
 import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
-import {TimingAttack} from "./preprocessor/TimingAttack";
 
 /**
  * @TODO Implement custom cache keys
@@ -48,9 +47,6 @@ export class RequestWrapper implements IRequestWrapper {
             [
                 new MySQLProvider(api),
                 new MongoDBProvider(api),
-            ],
-            [
-                new TimingAttack()
             ]
         ];
     }
