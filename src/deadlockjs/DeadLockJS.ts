@@ -122,6 +122,7 @@ export class DeadLockJS {
 
     /**
      * Instantiates a new router for the specified routes
+     * @param api
      * @param {RequestWrapper} wrapper The request wrapper
      * @param {Array<APIDirectory | APIEndPoint>} routes Routes to attach to the created router
      * @param {APIDirectory} parent Parent directory
@@ -133,7 +134,7 @@ export class DeadLockJS {
         // builds the current directory router
         const router: express.Router = express.Router({mergeParams: true});
 
-        // attach the jobexecutor(s)
+        // attach the job executor(s)
         if (parent.middleware != null && depth > 0)
             router.use(DeadLockJS.buildMiddleware(parent.middleware));
 
@@ -141,34 +142,38 @@ export class DeadLockJS {
         for (let i in routes) {
             const route: APIDirectory | APIEndPoint = routes[i];
 
-            switch (route.kind) {
+            if (typeof (route as APIDirectory).routes === 'undefined') {
+
+                /**
+                 * A end-point is an application entry-point. It can be a get, post, .. handler.
+                 */
+
+                // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
+                let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
+                router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
+
+            } else {
 
                 /**
                  * A directory is a list of routes (which can be directory themselves or end point (get, post, .. handlers)
                  *   One jobexecutor or more can be attached to a directory
                  */
-                case 'directory':
-                    // output new path
-                    //console.log(path + (route as APIDirectory).path + " (directory)");
-                    // recursively builds the router for sub-directory
-                    let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
-                    // attach the router
-                    router.use((route as APIDirectory).path, subRouter);
-                    break;
 
-                /**
-                 * A end-point is an application entry-point. It can be a get, post, .. handler.
-                 */
-                case 'endpoint':
-                    // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
-                    let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
-                    router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);
-                    break;
+                //console.log(path + (route as APIDirectory).path + " (directory)");
+                let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + (route as APIDirectory).path, depth + 1);
+                router.use((route as APIDirectory).path, subRouter);
             }
         }
         return router;
     }
 
+    /**
+     *
+     * @param {APIDescription} api
+     * @param {APIEndPoint} endPoint
+     * @param {string} path
+     * @returns {string}
+     */
     public static endPointToString(api: APIDescription, endPoint: APIEndPoint, path: string): string {
         let s: string = "";
         s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path + endPoint.path;
