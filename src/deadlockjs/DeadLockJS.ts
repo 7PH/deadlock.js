@@ -94,12 +94,9 @@ export class DeadLockJS {
 
         // error handler
         app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-            // set locals, only providing error in development
-            res.locals.message = err.message;
-            res.locals.error = req.app.get('env') === 'development' ? err : {};
-            // render the error page
-            res.status(err.status || 500);
-            res.json({error: err.message});
+            const code = err.status || 404;
+            res.status(code);
+            res.json({error: {message: err.message, code}});
         });
 
         return app;
