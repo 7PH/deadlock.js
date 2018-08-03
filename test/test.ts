@@ -16,20 +16,17 @@ const api: APIDescription = {
     hostname: HOST,
     port: PORT,
     root: {
-        kind: 'directory',
         middleware: [],
         path: PATH,
         routes: [
 
             // test suite 1
             {
-                kind: 'endpoint',
                 path: '/get1',
                 method: 'get',
                 handler: async () => ({ a: 2 })
             },
             {
-                kind: 'endpoint',
                 path: '/post1',
                 method: 'post',
                 handler: async () => ({ a: 3 })
@@ -37,7 +34,6 @@ const api: APIDescription = {
 
             // test suite 2
             {
-                kind: 'endpoint',
                 path: '/get2',
                 method: 'get',
                 cache: { expire: 500 },

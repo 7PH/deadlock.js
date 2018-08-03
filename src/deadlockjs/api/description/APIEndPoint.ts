@@ -1,13 +1,10 @@
 import * as iof from "io-filter";
-import {APIRoute} from "./APIRoute";
 import {RateLimiterConfigOverride} from "../../..";
 import {APIEndPointHandler} from "./APIEndPointHandler";
 import {APIMiddleware} from "./APIMiddleware";
 
 /** An API end-point is an application entry point */
-export interface APIEndPoint extends APIRoute {
-
-    kind: 'endpoint';
+export interface APIEndPoint {
 
     /** relative path of this end-point */
     path: string;
