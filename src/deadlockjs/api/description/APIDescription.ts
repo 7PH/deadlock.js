@@ -36,7 +36,7 @@ export interface APIDescription {
     favicon?: string;
 
     /** port */
-    port: number;
+    port?: number;
 
     /** host name */
     hostname?: string;

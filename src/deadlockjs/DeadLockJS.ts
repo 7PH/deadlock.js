@@ -41,7 +41,7 @@ export class DeadLockJS {
         const server: spdy.Server = spdy.createServer(options, app);
 
         return new Promise((resolve, reject) => {
-            server.listen(api.port, api.hostname, (err: any) => {
+            server.listen(api.port || 80, api.hostname || 'localhost', (err: any) => {
                 if (err) reject(err);
                 else resolve(server)
             });

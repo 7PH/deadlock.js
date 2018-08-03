@@ -46,7 +46,6 @@ Here is a simple working example, without database connection and rate limit:
 import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 
 const api: APIDescription = {
-    port: 3000,
     root: {
         path: '/api',
         routes: {
