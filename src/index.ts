@@ -6,7 +6,6 @@ export * from './deadlockjs/api/description/APIDirectory';
 export * from './deadlockjs/api/description/APIEndPoint';
 export * from './deadlockjs/api/description/APIEndPointHandler';
 export * from './deadlockjs/api/description/APIRoute';
-export * from './deadlockjs/api/description/APIRouteType';
 export * from './deadlockjs/api/description/MySQLConfig';
 
 export * from './deadlockjs/api/wrapper/local/RequestLocal';

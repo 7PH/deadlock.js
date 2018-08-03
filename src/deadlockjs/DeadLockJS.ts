@@ -3,16 +3,13 @@ import * as express from "express";
 import {Application, NextFunction, Request, RequestHandler, Response} from "express";
 import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
-import {APIRouteType} from "./api/description/APIRouteType";
 import {RequestWrapper} from "./api/wrapper/RequestWrapper";
-import * as path from "path";
 import * as bodyParser from "body-parser";
 import * as http from "http";
 import * as cluster from "cluster";
 import {PromiseCaching} from "promise-caching";
 import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
-import {Server} from "http";
 import * as cors from "cors";
 
 /**
@@ -140,7 +137,7 @@ export class DeadLockJS {
                  * A directory is a list of routes (which can be directory themselves or end point (get, post, .. handlers)
                  *   One preprocessor or more can be attached to a directory
                  */
-                case APIRouteType.DIRECTORY:
+                case 'directory':
                     // output new path
                     //console.log(path + (route as APIDirectory).path + " (directory)");
                     // recursively builds the router for sub-directory
@@ -152,7 +149,7 @@ export class DeadLockJS {
                 /**
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
-                case APIRouteType.END_POINT:
+                case 'endpoint':
                     // console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path) + "\n");
                     let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
                     router[(route as APIEndPoint).method]((route as APIEndPoint).path, handler);

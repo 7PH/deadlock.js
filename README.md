@@ -55,14 +55,14 @@ const api: APIDescription = {
     workers: 4,
     port: 3000,
     root: {
-        kind: APIRouteType.DIRECTORY,
+        kind: 'directory',
         path: '/api/v1',
         routes: [
             {
-                kind: APIRouteType.END_POINT,
+                kind: 'endpoint',
                 path: '/',
                 method: 'get',
-                handler: async (dl: RequestLocal) => { return {a: Math.random()}; }
+                handler: async () => ({a: Math.random()})
             }
         ]
     }
@@ -111,18 +111,15 @@ const api: APIDescription = {
         expire: 2000
     },
     root: {
-        kind: APIRouteType.DIRECTORY,
+        kind: 'directory',
         path: '/api/v1',
-        middleware: (req: express.Request, res: express.Response, next: express.NextFunction) => {
-            if (Math.random() < 0.5) {
-                next();
-            } else {
-                res.json({message: "nope"});
-            }
+        middleware: async (req: express.Request, res: express.Response) => {
+            if (Math.random() < 0.5)
+                throw new Error("Not allowed");
         },
         routes: [
             {
-                kind: APIRouteType.END_POINT,
+                kind: 'endpoint',
                 path: '/login',
                 method: 'post',
                 rateLimit: {weight: 80},
