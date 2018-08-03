@@ -5,9 +5,8 @@ import {APIDirectory} from "./api/description/APIDirectory";
 import {APIEndPoint} from "./api/description/APIEndPoint";
 import {RequestWrapper} from "./api/wrapper/RequestWrapper";
 import * as bodyParser from "body-parser";
-import * as http from "http";
+import * as spdy from "spdy";
 import * as cluster from "cluster";
-import {PromiseCaching} from "promise-caching";
 import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
 import * as cors from "cors";
@@ -21,7 +20,7 @@ export class DeadLockJS {
      * Build and start an express app with a specified api description
      * @param {APIDescription} api
      */
-    public static startApp(api: APIDescription): Promise<http.Server> {
+    public static startApp(api: APIDescription): Promise<spdy.Server> {
         if (cluster.isMaster) {
             // spawns workers
             for (let i = 0; i < api.workers - 1; i ++)
@@ -30,10 +29,21 @@ export class DeadLockJS {
 
         // These are the workers handling http requests
         const app: Application = DeadLockJS.getApp(api);
+        const options: spdy.ServerOptions = {};
+        if (api.ssl) {
+            options.spdy = {plain: false};
+            options.key = api.ssl.key;
+            options.cert = api.ssl.cert;
+        } else {
+            options.spdy = {plain: true};
+        }
+        const server: spdy.Server = spdy.createServer(options, app);
 
-        return new Promise(resolve => {
-            const server: http.Server = http.createServer(app);
-            server.listen(api.port, api.hostname, () => resolve(server));
+        return new Promise((resolve, reject) => {
+            server.listen(api.port, api.hostname, (err: any) => {
+                if (err) reject(err);
+                else resolve(server)
+            });
         });
     }
 
@@ -43,7 +53,7 @@ export class DeadLockJS {
      * @returns {e.Application}
      */
     private static getApp(api: APIDescription): express.Application {
-        const app = express();
+        const app: express.Application = express();
 
         // view engine setup
 

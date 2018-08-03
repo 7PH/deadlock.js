@@ -13,6 +13,11 @@ export interface APIDescription {
     /** cors options */
     cors?: cors.CorsOptions;
 
+    ssl?: {
+        cert: Buffer;
+        key: Buffer;
+    }
+
     /** path to static files */
     static?: string;
 
