@@ -20,6 +20,12 @@ const api: APIDescription = {
         path: PATH,
         routes: [
 
+            // default path
+            {
+                method: 'get',
+                handler: async () => ({ a: 1 })
+            },
+
             // test suite 1
             {
                 path: '/get1',
@@ -66,6 +72,26 @@ describe('DeadLockJS test', function () {
         process.exit();
     });
 
+    describe('api description', function () {
+
+        /** Default path 1 */
+        it('default path should be \'/\'', async function () {
+            const url: string = this.baseUrl;
+            let result: any = JSON.parse(await request.get(url));
+            if (!result || !result.data || !result.data.a || result.data.a !== 1)
+                throw new Error("Wrong response");
+        });
+
+        /** Default path 2 */
+        it('default path should ONLY be \'/\'', async function () {
+            const url: string = this.baseUrl + '/thisdonotexist';
+            let result: any = JSON.parse(await request.get(url, { simple: false }));
+            if (! result || ! result.error || result.error.code !== 404)
+                throw new Error("Wrong response");
+        });
+
+    });
+
     describe('basic calls', function () {
 
         /** Get */
@@ -73,7 +99,7 @@ describe('DeadLockJS test', function () {
             const url: string = this.baseUrl + 'get1';
             let result: any = JSON.parse(await request.get(url));
             if (!result || !result.data || !result.data.a || result.data.a !== 2)
-                throw new Error("GET error");
+                throw new Error("Wrong response");
         });
 
         /** POST */
@@ -81,7 +107,7 @@ describe('DeadLockJS test', function () {
             const url: string = this.baseUrl + 'post1';
             let result: any = JSON.parse(await request.post(url));
             if (! result || ! result.data || ! result.data.a || result.data.a !== 3)
-                throw new Error("POST error");
+                throw new Error("Wrong response");
         });
     });
 

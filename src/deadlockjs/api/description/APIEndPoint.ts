@@ -7,7 +7,7 @@ import {APIMiddleware} from "./APIMiddleware";
 export interface APIEndPoint {
 
     /** relative path of this end-point */
-    path: string;
+    path?: string;
 
     /** method to use */
     method: 'get' | 'post' | 'put' | 'delete';
