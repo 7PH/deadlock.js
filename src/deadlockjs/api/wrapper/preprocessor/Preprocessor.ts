@@ -7,5 +7,6 @@ import {APIEndPoint} from "../../../../";
  */
 
 export interface Preprocessor {
-    preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<any>;
+
+    preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void | any>;
 }

@@ -20,9 +20,13 @@ export class MySQLProvider implements Preprocessor {
     }
 
     public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+
         return new Promise<void>((resolve, reject) => {
+
             if (this.activated && endPoint.db && endPoint.db.mysql) {
+
                 if (this.mysqlPool != null) {
+
                     this.mysqlPool.getConnection((err, conn) => {
                         if (err) return reject(new Error('Could not allocate MySQL connection'));
                         else {
@@ -31,9 +35,11 @@ export class MySQLProvider implements Preprocessor {
                         }
                     });
                 } else {
+
                     return reject(new Error('Could not connect to the database'));
                 }
             } else {
+
                 return resolve();
             }
         })

@@ -11,6 +11,11 @@ import {GateKeeper} from "./preprocessor/GateKeeper";
 import {PromiseCaching} from "promise-caching";
 import {MongoDBProvider} from "./preprocessor/MongoDBProvider";
 import {MongoDBCleaner} from "./preprocessor/MongoDBCleaner";
+import {CacheHandler} from "./preprocessor/CacheHandler";
+
+
+type PromiseGenerator<T> = () => Promise<T>;
+
 
 /**
  * @TODO Implement custom cache keys
@@ -32,7 +37,12 @@ export class RequestWrapper implements IRequestWrapper {
      * @param cache
      * @param {APIDescription} api
      */
-    constructor(private cache: PromiseCaching, private api: APIDescription) {
+    constructor(private api: APIDescription) {
+
+        /**
+         * constraints:
+         *  - database cleaner should be executed before database allocators
+         */
         this.preprocessors = [
             [
                 new RequestInitializer()
@@ -40,6 +50,9 @@ export class RequestWrapper implements IRequestWrapper {
             [
                 new GateKeeper(api),
                 new RateLimiter(api),
+                new CacheHandler(api)
+            ],
+            [
                 new RequestBodyChecker(),
                 new MySQLCleaner(),
                 new MongoDBCleaner(),
@@ -51,34 +64,27 @@ export class RequestWrapper implements IRequestWrapper {
         ];
     }
 
-    /**
-     *
-     * @param {(() => Promise<any>)[][]} jobs
-     * @returns {Promise<any>}
-     */
-    private chainParallelPromises(jobs: (() => Promise<any>)[][]): Promise<any> {
+    private async chainParallelPromises(jobs: PromiseGenerator<any>[][]): Promise<any> {
         // no job to do
-        if (jobs.length == 0) return Promise.resolve();
+        if (jobs.length === 0) return Promise.resolve();
 
-        // build promise list of parallel tasks to do
-        const promises: (() => Promise<any>)[] = jobs.map(job => {
-            return () => Promise.all(
-                job.map(fun => fun())
-            );
-        });
+        // foreach preprocessor list
+        for (const job of jobs) {
 
-        const first: () => Promise<any> = promises.shift() as (() => Promise<any>);
+            // execute a bunch of them in parallel
+            let results: any[] = await Promise.all(job.map(j => j()));
 
-        return promises.reduce((promiseChain, currentTask) => {
-            return promiseChain.then(currentTask);
-        }, first());
+            // does one of them ask for request termination?
+            for (const result of results)
+                if (typeof result !== 'undefined')
+                    return result;
+        }
+
+        return;
     }
 
     private preprocessorsToPromiseGenerator(preprocessors: Preprocessor[], endPoint: APIEndPoint, req: express.Request, res: express.Response): (() => Promise<any>)[] {
-        return preprocessors.map(
-            preprocessor =>
-                preprocessor.preprocess.bind(preprocessor, endPoint, req, res)
-        );
+        return preprocessors.map(p => p.preprocess.bind(p, endPoint, req, res));
     }
 
     /**
@@ -100,35 +106,24 @@ export class RequestWrapper implements IRequestWrapper {
 
         try {
             // preprocess
-            await this.chainParallelPromises(promises);
+            let result: any = await this.chainParallelPromises(promises);
 
             // custom middle
-            if (typeof endPoint.middlewares !== 'undefined') {
-                await Promise.all(
-                    endPoint.middlewares.map(
-                        middleware => middleware(req, res)
-                    )
-                );
+            if (typeof endPoint.middlewares !== 'undefined')
+                await Promise.all(endPoint.middlewares.map(middleware => middleware(req, res)));
+
+            // meaning that one of the preprocessor wanted to terminate the request
+            if (typeof result !== 'undefined') {
+
+                const data: string = typeof result === 'string' ? result : JSON.stringify({data: result});
+                res.type('application/json');
+                res.send(data);
+                return;
             }
 
-            // handling request
-            let data: string;
-
-            if (endPoint.cache != null) {
-
-                let expire: number = (endPoint.cache || this.api.cache || {expire: 1000}).expire;
-
-                // fetch the result with cache
-                data = await this.cache.get<string>(endPoint, expire, this.getData.bind(this, endPoint, res.locals.dl));
-            } else {
-
-                // fetch the result without cache
-                data = await this.getData(endPoint, res.locals.dl);
-            }
-
-            // send back the result
+            // handle request
             res.type('application/json');
-            res.send(data);
+            res.send(await this.getData(endPoint, res.locals.dl));
         } catch (e) {
 
             // error occurred during loading or request

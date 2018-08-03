@@ -12,14 +12,10 @@ export class GateKeeper implements Preprocessor {
         }
     }
 
-    public preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            if (this.blacklist.indexOf(req.connection.remoteAddress || '127.0.0.1') !== -1) {
-                reject(new Error("You are banned from this server"));
-            } else {
-                resolve();
-            }
-        });
+    public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+
+        if (this.blacklist.indexOf(req.connection.remoteAddress || '127.0.0.1') !== -1)
+            throw new Error("You are banned from this server");
     }
 
 }
