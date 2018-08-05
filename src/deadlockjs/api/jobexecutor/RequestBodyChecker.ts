@@ -8,8 +8,7 @@ export class RequestBodyChecker implements JobExecutor {
 
         let filtered: any = {};
 
-        if (endPoint.paramFilter) {
-
+        if (typeof endPoint.paramFilter !== 'undefined') {
             filtered = endPoint.paramFilter.mask(req.body);
 
             if (typeof filtered === 'undefined')
