@@ -10,6 +10,7 @@ import * as cluster from "cluster";
 import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
 import * as cors from "cors";
+import * as cookieParser from "cookie-parser";
 
 /**
  * Main utility class
@@ -76,10 +77,14 @@ export class DeadLockJS {
             app.use(upload.any());
         }
 
+        // cookies?
+        if (api.cookies)
+            app.use(cookieParser());
+
         // usual uploads
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
-        //app.use(cookieParser());
+
         if (api.static)
             app.use(express.static(api.static));
 

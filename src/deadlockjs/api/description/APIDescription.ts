@@ -13,6 +13,8 @@ export interface APIDescription {
     /** cors options */
     cors?: cors.CorsOptions;
 
+    cookies?: boolean;
+
     verbose?: boolean;
 
     ssl?: {

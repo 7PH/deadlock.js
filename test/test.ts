@@ -1,4 +1,4 @@
-import {APIDescription} from "../src";
+import {APIDescription, RequestLocal} from "../src";
 import * as request from "request-promise-native"
 import {DeadLockJS} from "../src/deadlockjs/DeadLockJS";
 
@@ -39,6 +39,12 @@ const api: APIDescription = {
             },
 
             // test suite 3
+            '/post2': {
+                method: 'post',
+                handler: async (dl: RequestLocal) => dl.requestInfo.params
+            },
+
+            // test suite 4
             '/get3': {
                 method: 'get',
                 cache: { expire: 500 },
@@ -114,6 +120,17 @@ describe('DeadLockJS test', function () {
             const url: string = this.baseUrl + 'post1';
             let result: any = JSON.parse(await request.post(url));
             if (! result || ! result.data || ! result.data.a || result.data.a !== 3)
+                throw new Error("Wrong response");
+        });
+    });
+
+    describe('post parameter filter', function () {
+
+        /** POST */
+        it('post', async function () {
+            const url: string = this.baseUrl + 'post2';
+            let result: any = JSON.parse(await request.post(url, {form: {user: 12}}));
+            if (! result || ! result.data || ! result.data.user || result.data.user !== 12)
                 throw new Error("Wrong response");
         });
     });
