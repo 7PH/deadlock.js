@@ -1,6 +1,7 @@
 import {APIDescription, RequestLocal} from "../src";
 import * as request from "request-promise-native"
 import {DeadLockJS} from "../src/deadlockjs/DeadLockJS";
+import {NumberFilter, ObjectFilter, RegExpFilter} from "io-filter";
 
 const HOST: string = 'localhost';
 const PORT: number = 48654;
@@ -41,6 +42,7 @@ const api: APIDescription = {
             // test suite 3
             '/post2': {
                 method: 'post',
+                paramFilter: new ObjectFilter({user: new RegExpFilter(/^[0-9]+$/)}),
                 handler: async (dl: RequestLocal) => dl.requestInfo.params
             },
 
@@ -130,7 +132,7 @@ describe('DeadLockJS test', function () {
         it('post', async function () {
             const url: string = this.baseUrl + 'post2';
             let result: any = JSON.parse(await request.post(url, {form: {user: 12}}));
-            if (! result || ! result.data || ! result.data.user || result.data.user !== 12)
+            if (! result || ! result.data || ! result.data.user || result.data.user !== '12')
                 throw new Error("Wrong response");
         });
     });
