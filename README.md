@@ -39,8 +39,7 @@ const DeadLockJS = require('deadlockjs').DeadLockJS;
 const api = {
     routes: {
         '/': {
-            method: 'get',
-            handler: async () => 42
+            handler: async () => "Hello World"
         }
     }
 };
