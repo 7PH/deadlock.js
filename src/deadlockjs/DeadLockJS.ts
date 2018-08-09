@@ -117,8 +117,8 @@ export class DeadLockJS {
         return this.buildRouterForRoutes(
             api,
             new RequestWrapper(api),
-            {[api.basePath || '/']: api.root},
-            api.root,
+            {[api.basePath || '/']: api},
+            api,
             '',
             0);
     }

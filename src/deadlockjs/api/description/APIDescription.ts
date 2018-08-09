@@ -6,7 +6,7 @@ import * as cors from "cors";
 
 
 /** The API description describes the whole API */
-export interface APIDescription {
+export interface APIDescription extends APIDirectory {
     /** app secret */
     appSecret?: string;
 
@@ -24,9 +24,6 @@ export interface APIDescription {
 
     /** path to static files */
     static?: string;
-
-    /** base path of the api */
-    basePath?: string;
 
     /** amount of workers */
     workers?: number;
@@ -60,6 +57,6 @@ export interface APIDescription {
         expire: number;
     };
 
-    /** root directory. as it is an APIDirectory, it can be in a sub-directory, for instance, example.com/api/v0/ */
-    root: APIDirectory;
+    /** base path of the api */
+    basePath?: string;
 }
