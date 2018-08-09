@@ -12,7 +12,7 @@ export type HTTPMethod = 'get' | 'post' | 'put' | 'delete';
 export interface APIEndPoint {
 
     /** method to use */
-    method: HTTPMethod | HTTPMethod[];
+    method?: HTTPMethod | HTTPMethod[];
 
     /** will handle the request */
     handler: APIEndPointHandler;

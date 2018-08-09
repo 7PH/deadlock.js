@@ -152,6 +152,8 @@ export class DeadLockJS {
                  */
 
                 const endPoint: APIEndPoint = route as APIEndPoint;
+                if (typeof endPoint.method === 'undefined')
+                    endPoint.method = ['get', 'post', 'put', 'delete'];
 
                 if (api.verbose)
                     console.log(DeadLockJS.endPointToString(api, endPoint, path + routePath));
@@ -190,7 +192,13 @@ export class DeadLockJS {
      */
     public static endPointToString(api: APIDescription, endPoint: APIEndPoint, path: string): string {
         let out: string = "";
-        let methods: string = typeof endPoint.method === 'string' ? endPoint.method : endPoint.method.join('|');
+        let methods: string;
+        if (typeof endPoint.method === 'string')
+            methods = endPoint.method;
+        else if (typeof endPoint.method === 'object')
+            methods = endPoint.method.join('|');
+        else
+            methods = '*';
         out += (methods.toUpperCase() + ":").padEnd(32) + path;
         if (typeof api.rateLimit !== 'undefined') {
             let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
