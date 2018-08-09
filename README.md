@@ -1,13 +1,10 @@
-# DeadLockJS
-
-Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.
-
+# deadlock.js
+Lightweight Node.js/Express framework written in TypeScript for building secured, clustered and well-designed APIs.
 
 Still under development, not finished yet
 
 
 ## Install
-
 The easiest way to install deadlockjs is with [`npm`][npm].
 
 [npm]: https://www.npmjs.com/
@@ -17,45 +14,42 @@ npm i --save deadlockjs
 ```
 
 ## Features
-
-All these features are optional. See examples below 
-- [X] Full API specification in a single object
-- [X] Layer 7 DDoS mitigation (delay and drop)
-- [X] IP Whitelist for rate limit
-- [X] Built-in request caching (@SEE promise-caching)
-- [X] MySQL pool management, dynamic release of connections
-- [X] Request body validation and filtering
-- [X] Clustering
-- [X] IP Blacklist
-- [X] MongoDB support
-- [X] File upload
-- [X] CORS management
-- [X] HTTP2 Support
-- [X] HTTPS Support
-- [ ] Logs
-- [ ] Internal statistics
-- [ ] Internal API to interact with the server (statistics, retrieve documentation, ip blacklist/whitelist, etc)
+Here is te main list of feature that deadlock.js aims to provide.
+- [X] full API specification in a single object
+- [X] rate limit - delay and drop requests
+- [X] ip whitelist&blacklist for rate limit
+- [X] request caching
+- [X] mysql pool
+- [X] mongodb
+- [X] request body parsing, validation and filtering
+- [X] clustering
+- [X] file upload
+- [X] cors handling
+- [X] https & http2 Support
+- [ ] logs
+- [ ] internal statistics (hits, execution time)
+- [ ] internal api (retrieve stats, dynamically change route, ip blacklist/whitelist, etc)
 
 ## Examples
 
 ### Hello World
+Here is a simple working example with only request caching in javascript
+```javascript
 
-Here is a simple working example, without database connection and rate limit:
-```typescript
+const DeadLockJS = require('deadlockjs').DeadLockJS;
 
-import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
-
-const api: APIDescription = {
-    basePath: '/api',
+const api = {
     routes: {
         '/': {
             method: 'get',
-            handler: async () => ({a: 42})
+            handler: async () => 42
         }
     }
 };
 
-DeadLockJS.startApp(api);
+DeadLockJS
+    .startApp(api)
+    .then(() => console.log("Server started"));
 ```
 
 That's all you need to get your web server up and running! 
