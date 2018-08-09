@@ -151,10 +151,19 @@ export class DeadLockJS {
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
 
+                const endPoint: APIEndPoint = route as APIEndPoint;
+
                 if (api.verbose)
-                    console.log(DeadLockJS.endPointToString(api, route as APIEndPoint, path + routePath));
-                let handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
-                router[(route as APIEndPoint).method](routePath, handler);
+                    console.log(DeadLockJS.endPointToString(api, endPoint, path + routePath));
+
+                // attach handler to route with provided methods
+                const handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
+                if (typeof endPoint.method === 'string')
+                    router[endPoint.method](routePath, handler);
+                else
+                    for (let method of endPoint.method)
+                        router[method](routePath, handler);
+
 
             } else {
 
@@ -164,7 +173,7 @@ export class DeadLockJS {
                  */
 
                 if (api.verbose)
-                    console.log(path + routePath + " (directory)");
+                    console.log(DeadLockJS.directoryToString(path + routePath));
                 let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + routePath, depth + 1);
                 router.use(routePath, subRouter);
             }
@@ -180,18 +189,30 @@ export class DeadLockJS {
      * @returns {string}
      */
     public static endPointToString(api: APIDescription, endPoint: APIEndPoint, path: string): string {
-        let s: string = "";
-        s += (endPoint.method.toUpperCase() + ":").padEnd(6) + path;
+        let out: string = "";
+        let methods: string = typeof endPoint.method === 'string' ? endPoint.method : endPoint.method.join('|');
+        out += (methods.toUpperCase() + ":").padEnd(32) + path;
         if (typeof api.rateLimit !== 'undefined') {
             let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
             let rqtPerSec = api.rateLimit.maxWeightPerSec / weight;
-            s += "\n    RateLimit: " + rqtPerSec + " rqt/sec";
+            out += "\n    RateLimit: " + rqtPerSec + " rqt/sec";
         }
         if (typeof endPoint.cache !== 'undefined')
-            s += "\n    Caching: " + endPoint.cache.expire + "ms";
+            out += "\n    Caching: " + endPoint.cache.expire + "ms";
         if (typeof endPoint.paramFilter !== 'undefined')
-            s += "\n    " + endPoint.paramFilter.toString();
-        return s;
+            out += "\n    " + endPoint.paramFilter.toString();
+        return out;
+    }
+
+    /**
+     *
+     * @param {APIDescription} api
+     * @param {APIEndPoint} endPoint
+     * @param {string} path
+     * @returns {string}
+     */
+    public static directoryToString(path: string): string {
+        return "DIR/".padEnd(32) + path;
     }
 
     /**

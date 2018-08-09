@@ -3,11 +3,16 @@ import {APIEndPointHandler} from "./APIEndPointHandler";
 import {APIMiddleware} from "./APIMiddleware";
 import {RateLimiterConfigOverride} from "../jobexecutor";
 
+/**
+ * Acceptable method
+ */
+export type HTTPMethod = 'get' | 'post' | 'put' | 'delete';
+
 /** An API end-point is an application entry point */
 export interface APIEndPoint {
 
     /** method to use */
-    method: 'get' | 'post' | 'put' | 'delete';
+    method: HTTPMethod | HTTPMethod[];
 
     /** will handle the request */
     handler: APIEndPointHandler;
