@@ -11,8 +11,6 @@ import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
 import * as cors from "cors";
 import * as cookieParser from "cookie-parser";
-import {response} from "spdy";
-import end = response.end;
 
 /**
  * Main utility class
