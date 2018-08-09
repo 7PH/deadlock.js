@@ -46,13 +46,11 @@ Here is a simple working example, without database connection and rate limit:
 import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
 
 const api: APIDescription = {
-    root: {
-        path: '/api',
-        routes: {
-            '/': {
-                method: 'get',
-                handler: async () => ({a: 42})
-            }
+    basePath: '/api',
+    routes: {
+        '/': {
+            method: 'get',
+            handler: async () => ({a: 42})
         }
     }
 };
@@ -99,29 +97,27 @@ const api: APIDescription = {
         expire: 2000
     },
     basePath: '/api/v1',
-    root: {
-        middleware: async (req: express.Request, res: express.Response) => {
-            if (Math.random() < 0.5)
-                throw new Error("Not allowed");
-        },
-        routes: {
-            '/login': {
-                method: 'post',
-                rateLimit: {weight: 80},
-                paramFilter: new ObjectFilter({
-                    pseudo: new RegExpFilter(/^[a-zA-Z0-9]{3,20}$/),
-                    password: new ValueTypeFilter('string')
-                }),
-                dbConnection: true,
-                cache: {
-                    /** expire time in milliseconds: override defaut configuration */
-                    expire: 1000
-                },
-                handler: async (dl: RequestLocal) => {
-                    // dl.mysql -> MySQL Pool Connection
-                    // dl.requestInfo.params -> {pseudo: string, password: string}
-                    return {a: Math.random()};
-                }
+    middleware: async (req: express.Request, res: express.Response) => {
+        if (Math.random() < 0.5)
+            throw new Error("Not allowed");
+    },
+    routes: {
+        '/login': {
+            method: 'post',
+            rateLimit: {weight: 80},
+            paramFilter: new ObjectFilter({
+                pseudo: new RegExpFilter(/^[a-zA-Z0-9]{3,20}$/),
+                password: new ValueTypeFilter('string')
+            }),
+            dbConnection: true,
+            cache: {
+                /** expire time in milliseconds: override defaut configuration */
+                expire: 1000
+            },
+            handler: async (dl: RequestLocal) => {
+                // dl.mysql -> MySQL Pool Connection
+                // dl.requestInfo.params -> {pseudo: string, password: string}
+                return {a: Math.random()};
             }
         }
     }
