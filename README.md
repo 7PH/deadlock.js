@@ -30,8 +30,8 @@ Here is te main list of feature that deadlock.js aims to provide.
 
 ## examples
 
-### hello World
-Here is a simple working example with only request caching in javascript
+### hello world
+Here is a simple working example
 ```javascript
 
 const DeadLockJS = require('deadlockjs').DeadLockJS;
@@ -49,7 +49,7 @@ DeadLockJS
 
 That's all you need to get your web server up and running! 
 
-### complex example
+### more complex example
 
 Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
