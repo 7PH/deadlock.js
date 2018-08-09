@@ -12,13 +12,15 @@ let counter: number = 1;
 const api: APIDescription = {
 
     hostname: HOST,
+
     port: PORT,
+
     basePath: PATH,
 
     routes: {
         // test suite 1
         '/': {
-            method: 'get',
+            method: ['get'],
             handler: async () => ({ a: 1 })
         },
 
