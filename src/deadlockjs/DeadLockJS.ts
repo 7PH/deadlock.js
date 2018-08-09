@@ -11,6 +11,7 @@ import {APIMiddleware} from "./api/description/APIMiddleware";
 import * as multer from "multer";
 import * as cors from "cors";
 import * as cookieParser from "cookie-parser";
+import {APIEndPointHandler} from "./api/description";
 
 /**
  * Main utility class
@@ -133,7 +134,7 @@ export class DeadLockJS {
      * @param {number} depth Current depth of router
      * @returns {e.Router}
      */
-    private static buildRouterForRoutes(api: APIDescription, wrapper: RequestWrapper, routes: {[path: string]: APIDirectory | APIEndPoint}, parent: APIDirectory, path: string, depth: number): express.Router {
+    private static buildRouterForRoutes(api: APIDescription, wrapper: RequestWrapper, routes: {[path: string]: APIDirectory | APIEndPoint | APIEndPointHandler}, parent: APIDirectory, path: string, depth: number): express.Router {
         // builds the current directory router
         const router: express.Router = express.Router({mergeParams: true});
 
@@ -143,15 +144,21 @@ export class DeadLockJS {
 
         // attach directory routes
         for (const routePath in routes) {
-            const route: APIDirectory | APIEndPoint = routes[routePath];
+            const route: APIDirectory | APIEndPoint | APIEndPointHandler = routes[routePath];
 
-            if (typeof (route as APIDirectory).routes === 'undefined') {
+            if (typeof (<any>route).routes === 'undefined') {
 
                 /**
                  * A end-point is an application entry-point. It can be a get, post, .. handler.
                  */
 
-                const endPoint: APIEndPoint = route as APIEndPoint;
+                let endPoint: APIEndPoint;
+
+                if (typeof (<any>route).handler === 'undefined')
+                    endPoint = {handler: route as APIEndPointHandler};
+                else
+                    endPoint = route as APIEndPoint;
+
                 if (typeof endPoint.method === 'undefined')
                     endPoint.method = ['get', 'post', 'put', 'delete'];
 
@@ -159,7 +166,7 @@ export class DeadLockJS {
                     console.log(DeadLockJS.endPointToString(api, endPoint, path + routePath));
 
                 // attach handler to route with provided methods
-                const handler: RequestHandler = wrapper.wrap.bind(wrapper, route as APIEndPoint);
+                const handler: RequestHandler = wrapper.wrap.bind(wrapper, endPoint);
                 if (typeof endPoint.method === 'string')
                     router[endPoint.method](routePath, handler);
                 else

@@ -1,7 +1,7 @@
 {
     "name": "deadlockjs",
-    "version": "1.2.63",
-    "description": "Lightweight Node.js/Express framework written in TypeScript for building secure, clustered and well-designed APIs.",
+    "version": "1.2.64",
+    "description": "Lightweight Node.js/Express framework for building secured, clustered and well-designed APIs.",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",
     "scripts": {
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/7PH/DeadLockJS.git"
+        "url": "git+https://github.com/7PH/deadlock.js.git"
     },
     "keywords": [
         "rest",
@@ -23,9 +23,9 @@
     "author": "Benjamin Raymond <b.raymond@protonmail.ch>",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/7PH/DeadLockJS/issues"
+        "url": "https://github.com/7PH/deadlock.js/issues"
     },
-    "homepage": "https://github.com/7PH/DeadLockJS#readme",
+    "homepage": "https://github.com/7PH/deadlock.js#readme",
     "dependencies": {
         "@types/cors": "^2.8.4",
         "@types/mongodb": "^3.0.5",

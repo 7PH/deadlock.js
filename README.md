@@ -38,9 +38,7 @@ const DeadLockJS = require('deadlockjs').DeadLockJS;
 
 const api = {
     routes: {
-        '/': {
-            handler: async () => "Hello World"
-        }
+        '/': async () => "Hello World"
     }
 };
 
