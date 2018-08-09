@@ -20,7 +20,6 @@ const api: APIDescription = {
     routes: {
         // test suite 1
         '/': {
-            method: ['get'],
             handler: async () => ({ a: 1 })
         },
 
