@@ -19,7 +19,7 @@ const api: APIDescription = {
 
     routes: {
         // test suite 1
-        '/': async () => ({ a: 1 }),
+        '/': async () => "ok",
 
         // test suite 2
         '/get1': {
@@ -80,7 +80,7 @@ describe('DeadLockJS test', function () {
         it('default path should be \'/\'', async function () {
             const url: string = this.baseUrl;
             let result: any = JSON.parse(await request.get(url));
-            if (!result || !result.data || !result.data.a || result.data.a !== 1)
+            if (!result || !result.data || !result.data || result.data !== "ok")
                 throw new Error("Wrong response");
         });
 
