@@ -13,23 +13,22 @@ npm i --save deadlockjs
 
 ## features
 Here is te main list of feature that deadlock.js aims to provide.
-- [X] full API specification in a single object
-- [X] rate limit - delay and drop requests
-- [X] ip whitelist&blacklist for rate limit
-- [X] request caching
-- [X] mysql pool
-- [X] mongodb
-- [X] request body parsing, validation and filtering
-- [X] clustering
-- [X] file upload
-- [X] cors handling
-- [X] https & http2 Support
+- [x] full API specification in a single object
+- [x] rate limit - delay and drop requests
+- [x] ip whitelist&blacklist for rate limit
+- [x] request caching
+- [x] mysql pool
+- [x] mongodb
+- [x] request body parsing, validation and filtering
+- [x] clustering
+- [x] file upload
+- [x] cors handling
+- [x] https & http2 Support
 - [ ] logs
 - [ ] internal statistics (hits, execution time)
 - [ ] internal api (retrieve stats, dynamically change route, ip blacklist/whitelist, etc)
 
 ## examples
-
 ### hello world
 Here is a simple working example
 ```javascript
@@ -49,7 +48,7 @@ DeadLockJS
 
 That's all you need to get your web server up and running! 
 
-### more complex example
+### complex example
 
 Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
@@ -160,3 +159,54 @@ DeadLockJS
 ```
 
 Each worker will allocate a MySQL Pool with 'connectionLimit' connections.
+
+## model helper
+If you have an object oriented model, it is likely that at some point you want to output an object but hide some private properties (e.g. password field for an User instance).
+You may also want to make mysql select requests and retrieve instances of your model instead of raw objects.
+
+You can do that easily by extending the `JSONExportable` class and by defining a `fields` attribute which contains the public fields to be sent to the client. If every field is public, it should be set to `*`.
+
+From the client, you can retrieve your instance by using the `import` method.
+
+Here is an example of how you can define a `User` object in your model
+
+```typescript
+export interface IUser {
+    id: number;
+    email: string;
+    password?: string;
+}
+
+export class User extends JSONExportable implements IUser {
+    
+    // public fields
+    fields: string[] | '*' = ['email'];
+    
+    id: number = 0;
+    email: string = '';
+    password?: string;
+    
+    constructor(data: IUser) {
+        super();
+        this.import(data);
+    }
+}
+```
+
+When you send `JSONExportable` instances to the client, private properties (not included in fields) are automatically removed.
+
+You just have to extend the `JSONExportable` class and define the `fields`
+
+if you are using mysql, you can use the `MySQL` helper class to make a request which directly returns instances of your model.
+
+We suppose you have a `users` table which contains (id, email, password).
+
+You can use:
+
+```typescript
+// mysql: mysql.Connection
+// User: user class defined in the previous code section
+const users: User[] = await MySQL.query<User>(mysql, `SELECT id, email, password FROM users`, User);
+```
+
+In order to use this syntax, the `User` class has to have a constructor which calls the `import` method from the `JSONExportable` superclass.
