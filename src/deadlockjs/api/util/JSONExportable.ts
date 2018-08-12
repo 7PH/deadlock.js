@@ -8,8 +8,20 @@ export abstract class JSONExportable implements Exportable<string> {
 
     public fields?: string[];
 
+    constructor(data: string | object) {
+        this.import(data);
+    }
+
     public export(): string {
-        return JSON.stringify(typeof this.fields === 'undefined' ? this : this.fields);
+        let data: any;
+        if (typeof this.fields === 'undefined')
+            data = this;
+        else {
+            data = {};
+            for (let field of this.fields)
+                data[field] = (<any>this)[field];
+        }
+        return JSON.stringify(data);
     }
 
     public import(data: string | object): this {
