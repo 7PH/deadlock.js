@@ -147,11 +147,7 @@ export class RequestWrapper implements IRequestWrapper {
                     res.send(result);
                 } else {
 
-                    const data: any = JSON.stringify({data: result}, function(key, value) {
-                        if (value instanceof JSONExportable)
-                            return value.export();
-                        return value;
-                    });
+                    const data: any = JSON.stringify({data: result}, JSONExportable.replacer);
                     res.type('application/json');
                     res.send(data);
                 }

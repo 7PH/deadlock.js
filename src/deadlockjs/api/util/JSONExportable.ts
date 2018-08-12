@@ -8,6 +8,18 @@ export abstract class JSONExportable implements Exportable {
 
     public abstract fields: string[] | '*';
 
+    /**
+     *
+     * @param {string} key
+     * @param value
+     * @returns {any}
+     */
+    public static replacer(key: string, value: any) {
+        if (value instanceof JSONExportable)
+            return value.export();
+        return value;
+    }
+
     public export(): object {
         let data: any;
         if (this.fields === '*')
