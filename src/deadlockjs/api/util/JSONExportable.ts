@@ -6,15 +6,11 @@ import {Exportable} from "./Exportable";
  */
 export abstract class JSONExportable implements Exportable<string> {
 
-    public fields?: string[];
-
-    constructor(data: string | object) {
-        this.import(data);
-    }
+    public abstract fields: string[] | '*';
 
     public export(): string {
         let data: any;
-        if (typeof this.fields === 'undefined')
+        if (this.fields === '*')
             data = this;
         else {
             data = {};
