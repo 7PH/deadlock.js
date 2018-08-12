@@ -2,9 +2,9 @@
 /**
  * Something that can be imported or exported
  */
-export interface Exportable<T> {
+export interface Exportable {
 
-    export(): T;
+    export(): object;
 
-    import(d: T): void;
+    import(d: string | object): void;
 }

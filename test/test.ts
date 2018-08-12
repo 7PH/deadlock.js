@@ -77,7 +77,7 @@ describe('DeadLockJS test', function () {
     describe('api description', function () {
 
         /** Default path 1 */
-        it('default path should be \'/\'', async function () {
+        it('default path should be \'/\' 1', async function () {
             const url: string = this.baseUrl;
             let result: any = JSON.parse(await request.get(url));
             if (!result || !result.data || !result.data || result.data !== "ok")
@@ -85,7 +85,7 @@ describe('DeadLockJS test', function () {
         });
 
         /** Default path 2 */
-        it('default path should be \'/\'', async function () {
+        it('default path should be \'/\' 2', async function () {
             const url: string = this.baseUrl + "/nopenopenope";
             let result: any = JSON.parse(await request.get(url, {simple: false}));
             if (! result || ! result.error || result.error.code !== 404)

@@ -1,17 +1,18 @@
-import {APIDescription, APIEndPoint, RequestLocal} from "../../../";
+import {APIDescription, APIEndPoint} from "../../../";
 import {Request, Response, NextFunction} from "express";
-import {JobExecutor} from "../jobexecutor/JobExecutor";
-import {RequestBodyChecker} from "../jobexecutor/RequestBodyChecker";
-import {MySQLCleaner} from "../jobexecutor/MySQLCleaner";
-import {MySQLProvider} from "../jobexecutor/MySQLProvider";
+import {JobExecutor} from "../jobexecutor";
+import {RequestBodyChecker} from "../jobexecutor";
+import {MySQLCleaner} from "../jobexecutor";
+import {MySQLProvider} from "../jobexecutor";
 import {IRequestWrapper} from "./IRequestWrapper";
-import {RateLimiter} from "../jobexecutor/RateLimiter";
-import {RequestInitializer} from "../jobexecutor/RequestInitializer";
-import {GateKeeper} from "../jobexecutor/GateKeeper";
-import {MongoDBProvider} from "../jobexecutor/MongoDBProvider";
-import {MongoDBCleaner} from "../jobexecutor/MongoDBCleaner";
-import {CacheHandler} from "../jobexecutor/CacheHandler";
-import {RequestHandler} from "../jobexecutor/RequestHandler";
+import {RateLimiter} from "../jobexecutor";
+import {RequestInitializer} from "../jobexecutor";
+import {GateKeeper} from "../jobexecutor";
+import {MongoDBProvider} from "../jobexecutor";
+import {MongoDBCleaner} from "../jobexecutor";
+import {CacheHandler} from "../jobexecutor";
+import {RequestHandler} from "../jobexecutor";
+import {JSONExportable} from "../util";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -138,12 +139,27 @@ export class RequestWrapper implements IRequestWrapper {
             // meaning that one of the jobexecutor wanted to terminate the request
             if (typeof result !== 'undefined') {
 
-                const data: string = typeof result === 'string' ? result : JSON.stringify({data: result});
-                res.type('application/json');
-                res.send(data);
+
+                // convert the result to string
+                if (typeof result === 'string') {
+
+                    res.type('application/json');
+                    res.send(result);
+                } else {
+
+                    const data: any = JSON.stringify({data: result}, function(key, value) {
+                        if (value instanceof JSONExportable)
+                            return value.export();
+                        return value;
+                    });
+                    res.type('application/json');
+                    res.send(data);
+                }
+
+                // end
                 return;
             }
-            
+
             // not supposed to happen because the last jobexecutor always return a value
             throw new Error("Unexpected end of file");
         } catch (e) {

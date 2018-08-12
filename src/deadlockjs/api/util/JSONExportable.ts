@@ -4,11 +4,11 @@ import {Exportable} from "./Exportable";
  * @TODO document
  * @TODO test
  */
-export abstract class JSONExportable implements Exportable<string> {
+export abstract class JSONExportable implements Exportable {
 
     public abstract fields: string[] | '*';
 
-    public export(): string {
+    public export(): object {
         let data: any;
         if (this.fields === '*')
             data = this;
@@ -17,7 +17,7 @@ export abstract class JSONExportable implements Exportable<string> {
             for (let field of this.fields)
                 data[field] = (<any>this)[field];
         }
-        return JSON.stringify(data);
+        return data;
     }
 
     public import(data: string | object): this {
