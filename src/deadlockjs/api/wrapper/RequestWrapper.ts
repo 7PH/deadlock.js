@@ -12,7 +12,7 @@ import {MongoDBProvider} from "../jobexecutor";
 import {MongoDBCleaner} from "../jobexecutor";
 import {CacheHandler} from "../jobexecutor";
 import {RequestHandler} from "../jobexecutor";
-import {JSONExportable} from "../util";
+import {Exportable} from "../util";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -147,7 +147,7 @@ export class RequestWrapper implements IRequestWrapper {
                     res.send(result);
                 } else {
 
-                    const data: any = JSON.stringify({data: result}, JSONExportable.replacer);
+                    const data: any = JSON.stringify({data: result}, Exportable.replacer);
                     res.type('application/json');
                     res.send(data);
                 }

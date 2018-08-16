@@ -1,7 +1,7 @@
 import {JobExecutor} from "./JobExecutor";
 import {APIDescription, APIEndPoint, RequestLocal} from "../../../index";
 import * as e from "express";
-import {JSONExportable} from "../util";
+import {Exportable} from "../util";
 import {PromiseCaching} from "promise-caching";
 
 export class CacheHandler implements JobExecutor {
@@ -45,7 +45,7 @@ export class CacheHandler implements JobExecutor {
 
             let cache: string;
             if (typeof dl.cacheUpdate !== 'string')
-                cache = JSON.stringify({ data: dl.cacheUpdate }, JSONExportable.replacer);
+                cache = JSON.stringify({ data: dl.cacheUpdate }, Exportable.replacer);
             else
                 cache = dl.cacheUpdate;
 

@@ -1,10 +1,77 @@
+import {IExportable} from "./IExportable";
 
 /**
- * Something that can be imported or exported
+ * @TODO document
+ * @TODO test
  */
-export interface Exportable {
+export abstract class Exportable implements IExportable {
 
-    export(): object;
+    public abstract fields?: string[];
 
-    import(d: string | object): void;
+    /**
+     *
+     * @param {string} key
+     * @param value
+     * @returns {any}
+     */
+    public static replacer(key: string, value: any) {
+        if (value instanceof Exportable)
+            return value.export();
+        return value;
+    }
+
+    public export(): object {
+        let data: any;
+        if (typeof this.fields === 'undefined')
+            data = this;
+        else {
+            data = {};
+            for (let field of this.fields)
+                data[field] = (<any>this)[field];
+        }
+        return data;
+    }
+
+    public import(data: string | object): this {
+
+        let json: any = typeof data === 'string' ? JSON.parse(data) : data;
+
+        for (let key in json) {
+
+            if (! json.hasOwnProperty(key))
+                continue;
+
+            // curr value of the value
+            const localValue: any = (<any>this)[key];
+
+            // attribute exists on the object but does not have the same type
+            if (typeof localValue !== typeof json[key] && typeof localValue !== 'undefined')
+                continue;
+
+            // get the value
+            const val: any = json[key];
+
+            switch (typeof val) {
+
+                // assigning a sub-object
+                case 'object':
+
+                    if (localValue instanceof Exportable)
+                        // recursive import
+                        localValue.import(val);
+                    else
+                        // default behaviour
+                        (<any>this)[key] = val;
+
+                    break;
+
+                // just assign the property
+                default:
+                    (<any>this)[key] = val;
+                    break;
+            }
+        }
+
+        return this;
+    }
 }
