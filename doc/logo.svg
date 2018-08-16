@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="187.75717mm"
+   height="15.834459mm"
+   viewBox="0 0 187.75717 15.834459"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/redsky/WebstormProjects/DeadLockJS/doc/logo.png"
+   inkscape:export-xdpi="194.19408"
+   inkscape:export-ydpi="194.19408">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.1357188"
+     inkscape:cx="244.63092"
+     inkscape:cy="0.50785128"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1012"
+     inkscape:window-x="1600"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-7.4366344,-66.353389)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#11002b;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="56.177769"
+       y="80.033905"
+       id="text39"><tspan
+         sodipodi:role="line"
+         id="tspan37"
+         x="56.177769"
+         y="80.033905"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.75555611px;font-family:'Courier 10 Pitch';-inkscape-font-specification:'Courier 10 Pitch';fill:#11002b;stroke-width:0.26458332">deadlock</tspan></text>
+    <g
+       id="g35"
+       transform="matrix(0.48038729,0,0,0.48038729,34.606439,55.926006)">
+      <path
+         inkscape:transform-center-x="-0.69855594"
+         transform="rotate(75,31.469713,16.309559)"
+         inkscape:transform-center-y="0.69855494"
+         d="m 34.635994,25.343858 2.33741,-4.048513 2.33741,-4.048512 2.33741,4.048512 2.33741,4.048513 -4.67482,0 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="3.6651914"
+         sodipodi:arg1="2.6179939"
+         sodipodi:r2="2.6990087"
+         sodipodi:r1="5.3980169"
+         sodipodi:cy="22.64485"
+         sodipodi:cx="39.310814"
+         sodipodi:sides="3"
+         id="path29"
+         style="fill:#ccaaff;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <path
+         transform="rotate(-15,34.02689,81.151734)"
+         inkscape:transform-center-y="2.210636"
+         d="m 36.572098,36.528122 -1.982003,-7.396935 -1.982003,-7.396935 7.396936,1.982003 7.396935,1.982003 -5.414933,5.414932 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="2.8797933"
+         sodipodi:arg1="1.8325957"
+         sodipodi:r2="4.4212737"
+         sodipodi:r1="8.8425474"
+         sodipodi:cy="27.986877"
+         sodipodi:cx="38.860718"
+         sodipodi:sides="3"
+         id="path16"
+         style="fill:#b380ff;fill-opacity:1;stroke-width:0.21548347"
+         sodipodi:type="star" />
+      <path
+         inkscape:transform-center-x="1.5379582"
+         transform="matrix(0.95246917,-0.25521336,0.25521336,0.95246917,-19.406431,11.849247)"
+         inkscape:transform-center-y="1.5379542"
+         d="m 37.278023,43.753311 -5.218807,-9.039239 -5.218807,-9.039238 10.437614,-1e-6 10.437614,0 -5.218807,9.039239 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="2.6179939"
+         sodipodi:arg1="1.5707963"
+         sodipodi:r2="6.0261593"
+         sodipodi:r1="12.052319"
+         sodipodi:cy="31.700993"
+         sodipodi:cx="37.278023"
+         sodipodi:sides="3"
+         id="path18"
+         style="fill:#7f2aff;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+      <path
+         inkscape:transform-center-x="3.8432371"
+         d="m 32.593802,24.126064 0,13.313362 1e-6,13.313362 -11.52971,-6.656681 -11.5297092,-6.65668 11.5297092,-6.656681 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="0"
+         sodipodi:arg1="-1.0471976"
+         sodipodi:r2="7.6864729"
+         sodipodi:r1="15.372946"
+         sodipodi:cy="37.439426"
+         sodipodi:cx="24.90733"
+         sodipodi:sides="3"
+         id="path14"
+         style="fill:#220055;fill-opacity:1;stroke-width:0.26458332"
+         sodipodi:type="star" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#330080;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="153.94702"
+       y="80.109077"
+       id="text45"><tspan
+         sodipodi:role="line"
+         id="tspan43"
+         x="153.94702"
+         y="80.109077"
+         style="font-size:9.87777805px;fill:#330080;stroke-width:0.26458332">.js</tspan></text>
+  </g>
+</svg>

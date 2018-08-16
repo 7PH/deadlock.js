@@ -1,4 +1,11 @@
-# deadlock.js
+![](./doc/logo.png)
+
+<p align="center">
+    <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/npm-v1.2.73-brightgreen.svg" />
+</p>
+
+## intro
 Lightweight Node.js/Express framework written in TypeScript for building secured, clustered and well-designed APIs.
 
 
@@ -160,53 +167,3 @@ DeadLockJS
 
 Each worker will allocate a MySQL Pool with 'connectionLimit' connections.
 
-## model helper
-If you have an object oriented model, it is likely that at some point you want to output an object but hide some private properties (e.g. password field for an User instance).
-You may also want to make mysql select requests and retrieve instances of your model instead of raw objects.
-
-You can do that easily by extending the `JSONExportable` class and by defining a `fields` attribute which contains the public fields to be sent to the client. If every field is public, it should be set to `*`.
-
-From the client, you can retrieve your instance by using the `import` method.
-
-Here is an example of how you can define a `User` object in your model
-
-```typescript
-export interface IUser {
-    id: number;
-    email: string;
-    password?: string;
-}
-
-export class User extends JSONExportable implements IUser {
-    
-    // public fields
-    fields: string[] | '*' = ['email'];
-    
-    id: number = 0;
-    email: string = '';
-    password?: string;
-    
-    constructor(data: IUser) {
-        super();
-        this.import(data);
-    }
-}
-```
-
-When you send `JSONExportable` instances to the client, private properties (not included in fields) are automatically removed.
-
-You just have to extend the `JSONExportable` class and define the `fields`
-
-if you are using mysql, you can use the `MySQL` helper class to make a request which directly returns instances of your model.
-
-We suppose you have a `users` table which contains (id, email, password).
-
-You can use:
-
-```typescript
-// mysql: mysql.Connection
-// User: user class defined in the previous code section
-const users: User[] = await MySQL.query<User>(mysql, `SELECT id, email, password FROM users`, User);
-```
-
-In order to use this syntax, the `User` class has to have a constructor which calls the `import` method from the `JSONExportable` superclass.
