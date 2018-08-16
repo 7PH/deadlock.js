@@ -1,7 +1,26 @@
-import {Connection} from "mysql";
+import {Connection, MysqlError} from "mysql";
 
 
 export class MySQL {
+
+    /**
+     *
+     * @param {Connection} mysql
+     * @param {string} rqt
+     * @param data
+     * @returns {Promise<any>}
+     * @private
+     */
+    public static async awaitQuery(mysql: Connection, rqt: string, data?: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            mysql.query(rqt, data, (err: MysqlError | null, data: any) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve(data);
+            });
+        });
+    }
 
     /**
      *
@@ -18,12 +37,8 @@ export class MySQL {
         data?: Array<any>
     ): Promise<Class[]> {
 
-        return new Promise<Class[]>((resolve, reject) => {
-            mysql.query(rqt, data, (err, rows: any[]) => {
-                if (err) return reject(err);
-                else return resolve(rows.map(row => new Construct(row)));
-            });
-        });
+        const rows: any[] = await MySQL.awaitQuery(mysql, rqt, data);
+        return rows.map(row => new Construct(row));
     }
 
     /**
@@ -41,10 +56,10 @@ export class MySQL {
         data?: Array<any>
     ): Promise<Class> {
 
-        const rows: Class[] = await MySQL.query<Class>(mysql, rqt, Construct, data);
-        if (rows.length == 0)
-            throw new Error("Not found");
-        return rows[0];
+        const rows: any[] = await MySQL.awaitQuery(mysql, rqt, data);
+        if (rows.length === 0)
+            throw new Error("No result");
+        return new Construct(rows[0]);
     }
 
     /**
@@ -55,12 +70,9 @@ export class MySQL {
      * @returns {Promise<number>}
      */
     public static async insert(mysql: Connection, rqt: string, entry: any): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            mysql.query(rqt, entry, (err, rows: any) => {
-                if (err) return reject(err);
-                else return resolve(rows.insertId);
-            });
-        });
+
+        let result: any = await MySQL.awaitQuery(mysql, rqt, entry);
+        return result.insertId;
     }
 
     /**
@@ -71,11 +83,7 @@ export class MySQL {
      * @returns {Promise<void>}
      */
     public static async exec(mysql: Connection, rqt: string, data?: Array<any>): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            mysql.query(rqt, data, (err, rows) => {
-                if (err) return reject(err);
-                else return resolve();
-            });
-        });
+
+        await MySQL.awaitQuery(mysql, rqt, data);
     }
 }
