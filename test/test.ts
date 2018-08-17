@@ -45,8 +45,18 @@ const api: APIDescription = {
         // test suite 4
         '/get3': {
             method: 'get',
-            cache: { expire: 500 },
-            handler: async () => counter ++
+            cache: { expire: 100 },
+            handler: async () => ++counter
+        },
+        '/get4': {
+            method: 'get',
+            cache: { expire: 100, key: () => ++counter },
+            handler: async () => ++counter
+        },
+        '/get5': {
+            method: 'get',
+            cache: { expire: 100, key: () => 'same' },
+            handler: async () => ++counter
         }
     }
 };
@@ -138,32 +148,72 @@ describe('DeadLockJS test', function () {
         it('cache hit & expire', async function () {
 
             this.slow(3000);
-
             const url: string = this.baseUrl + 'get3';
 
             let result: any = JSON.parse(await request.get(url));
-
             if (! result || ! result.data || ! result.data)
                 throw new Error("Expected value");
-
-            let oldRand: number = result.data;
+            let oldNumber: number = result.data;
 
             result = JSON.parse(await request.get(url));
-
             if (! result || ! result.data || ! result.data)
                 throw new Error("Expected value");
-
-            if (result.data !== oldRand)
+            if (result.data !== oldNumber)
                 throw new Error("Expected cache hit");
 
-            await sleep(1000);
+            await sleep(200);
 
             result = JSON.parse(await request.get(url));
-
             if (! result || ! result.data || ! result.data)
                 throw new Error("Expected value");
 
-            if (result.data === oldRand)
+            if (result.data === oldNumber)
+                throw new Error("Unexpected cache hit");
+        });
+
+        /** Get */
+        it('custom cache keys 1', async function () {
+
+            this.slow(3000);
+            const url: string = this.baseUrl + 'get4';
+
+            let result: any = JSON.parse(await request.get(url));
+            if (! result || ! result.data || ! result.data)
+                throw new Error("Expected value");
+            let oldNumber: number = result.data;
+
+            result = JSON.parse(await request.get(url));
+            if (! result || ! result.data || ! result.data)
+                throw new Error("Expected value");
+            if (result.data === oldNumber)
+                throw new Error("Unexpected cache hit");
+        });
+
+
+        /** Get */
+        it('custom cache keys 2', async function () {
+
+            this.slow(3000);
+            const url: string = this.baseUrl + 'get5';
+
+            let result: any = JSON.parse(await request.get(url));
+            if (! result || ! result.data || ! result.data)
+                throw new Error("Expected value");
+            let oldNumber: number = result.data;
+
+            result = JSON.parse(await request.get(url));
+            if (! result || ! result.data || ! result.data)
+                throw new Error("Expected value");
+            if (result.data !== oldNumber)
+                throw new Error("Expected cache hit");
+
+            await sleep(200);
+
+            result = JSON.parse(await request.get(url));
+            if (! result || ! result.data || ! result.data)
+                throw new Error("Expected value");
+
+            if (result.data === oldNumber)
                 throw new Error("Unexpected cache hit");
         });
 
