@@ -10,6 +10,15 @@ export abstract class Exportable implements IExportable {
 
     /**
      *
+     * @param data
+     * @returns {string}
+     */
+    public static stringify(data: any) {
+        return JSON.stringify(data, Exportable.replacer);
+    }
+
+    /**
+     *
      * @param {string} key
      * @param value
      * @returns {any}

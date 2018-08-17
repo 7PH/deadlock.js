@@ -3,6 +3,8 @@ import {APIDirectory} from "./APIDirectory";
 import {RateLimiterConfig} from "../../../";
 import * as multer from "multer";
 import * as cors from "cors";
+import * as morgan from "morgan";
+import {Options} from "morgan";
 
 
 /** The API description describes the whole API */
@@ -10,8 +12,12 @@ export interface APIDescription extends APIDirectory {
     /** app secret */
     appSecret?: string;
 
-    /** cors options */
     cors?: cors.CorsOptions;
+
+    logger?: {
+        format: string;
+        options: morgan.Options
+    };
 
     cookies?: boolean;
 
