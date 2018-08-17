@@ -1,17 +1,18 @@
-import {APIDescription} from "./api/description/APIDescription";
+import {APIDescription} from "./api/description";
 import * as express from "express";
 import {Application, NextFunction, Request, RequestHandler, Response} from "express";
-import {APIDirectory} from "./api/description/APIDirectory";
-import {APIEndPoint} from "./api/description/APIEndPoint";
-import {RequestWrapper} from "./api/wrapper/RequestWrapper";
+import {APIDirectory} from "./api/description";
+import {APIEndPoint} from "./api/description";
+import {RequestWrapper} from "./api/wrapper";
 import * as bodyParser from "body-parser";
 import * as spdy from "spdy";
 import * as cluster from "cluster";
-import {APIMiddleware} from "./api/description/APIMiddleware";
+import {APIMiddleware} from "./api/description";
 import * as multer from "multer";
 import * as cors from "cors";
 import * as cookieParser from "cookie-parser";
 import {APIEndPointHandler} from "./api/description";
+import * as morgan from "morgan";
 
 /**
  * Main utility class
@@ -67,6 +68,10 @@ export class DeadLockJS {
             res.removeHeader("X-Powered-By");
             next();
         });
+
+        // logs
+        if (typeof api.logger !== 'undefined')
+            app.use(morgan(api.logger.format, api.logger.options));
 
         // cors
         if (typeof api.cors !== 'undefined')
