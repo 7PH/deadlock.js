@@ -4,7 +4,7 @@ import * as express from "express";
 import {MongoClient} from "mongodb";
 
 
-export class MongoDBProvider implements JobExecutor {
+export class MongoDBProvider extends JobExecutor {
 
 
     private readonly activated: boolean = false;
@@ -12,6 +12,8 @@ export class MongoDBProvider implements JobExecutor {
     private readonly url: string;
 
     constructor(api: APIDescription) {
+        super(api);
+
         if (api.db) {
             if (api.db.mongodb) {
 
@@ -22,7 +24,7 @@ export class MongoDBProvider implements JobExecutor {
         }
     }
 
-    public preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public execute (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         return new Promise<void>((resolve, reject) => {
 

@@ -13,6 +13,7 @@ import {MongoDBCleaner} from "../jobexecutor";
 import {CacheHandler} from "../jobexecutor";
 import {RequestHandler} from "../jobexecutor";
 import {Exportable} from "../util";
+import {JobResult} from "../jobexecutor/JobResult";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -35,7 +36,6 @@ export class RequestWrapper implements IRequestWrapper {
     public readonly jobs: Array<Array<JobExecutor>> = [];
 
     /**
-     * @param cache
      * @param {APIDescription} api
      */
     constructor(private api: APIDescription) {
@@ -46,7 +46,7 @@ export class RequestWrapper implements IRequestWrapper {
          */
         this.jobs = [
             [
-                new RequestInitializer()
+                new RequestInitializer(api)
             ],
             [
                 new GateKeeper(api),
@@ -54,9 +54,9 @@ export class RequestWrapper implements IRequestWrapper {
                 new CacheHandler(api)
             ],
             [
-                new RequestBodyChecker(),
-                new MySQLCleaner(),
-                new MongoDBCleaner(),
+                new RequestBodyChecker(api),
+                new MySQLCleaner(api),
+                new MongoDBCleaner(api),
             ],
             [
                 new MySQLProvider(api),
@@ -75,11 +75,11 @@ export class RequestWrapper implements IRequestWrapper {
      * @param {e.Response} res
      * @returns {PromiseGenerator<any>[][]}
      */
-    private getGenerators(endPoint: APIEndPoint, req: Request, res: Response): PromiseGenerator<any>[][] {
+    private getGenerators(endPoint: APIEndPoint, req: Request, res: Response): PromiseGenerator<JobResult>[][] {
         return this.jobs.map(bunchOfJob =>
                 bunchOfJob.map(job =>
                     () =>
-                        job.preprocess(endPoint, req, res)
+                        job.run(endPoint, req, res)
                 )
             );
     }
@@ -96,12 +96,12 @@ export class RequestWrapper implements IRequestWrapper {
         // foreach jobexecutor list
         for (const bunch of generators) {
 
-            // execute a bunch of them in parallel
+            // run a bunch of them in parallel
             let results: any[] = await Promise.all(bunch.map(bunch => bunch()));
 
             // does one of them ask for request termination?
             for (const result of results)
-                if (typeof result !== 'undefined')
+                if (typeof result !== 'undefined' && typeof result.result !== 'undefined')
                     return result;
         }
 
@@ -129,35 +129,25 @@ export class RequestWrapper implements IRequestWrapper {
     public async wrap(endPoint: APIEndPoint, req: Request, res: Response, next: NextFunction) {
 
         try {
-            // execute jobs
-            let result: any = await this.executeGenerators(endPoint, req, res);
+            // run jobs
+            let jobResult: JobResult = await this.executeGenerators(endPoint, req, res);
 
             // custom middle
             if (typeof endPoint.middlewares !== 'undefined')
                 await Promise.all(endPoint.middlewares.map(middleware => middleware(req, res)));
 
-            // meaning that one of the jobexecutor wanted to terminate the request
-            if (typeof result !== 'undefined') {
+            // convert the result to string
+            if (! (jobResult.executor instanceof RequestHandler) && typeof jobResult.result === 'string') {
 
+                res.type('application/json');
+                res.send(jobResult.result);
+            } else {
 
-                // convert the result to string
-                if (typeof result === 'string') {
-
-                    res.type('application/json');
-                    res.send(result);
-                } else {
-
-                    const data: any = JSON.stringify({data: result}, Exportable.replacer);
-                    res.type('application/json');
-                    res.send(data);
-                }
-
-                // end
-                return;
+                const data: any = JSON.stringify({data: jobResult.result}, Exportable.replacer);
+                res.type('application/json');
+                res.send(data);
             }
 
-            // not supposed to happen because the last jobexecutor always return a value
-            throw new Error("Unexpected end of file");
         } catch (e) {
 
             // error occurred during loading or request

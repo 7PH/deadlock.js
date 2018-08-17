@@ -3,7 +3,7 @@ import {APIEndPoint} from "../../../index";
 import * as express from "express";
 import {MongoClient} from "mongodb";
 
-export class MongoDBCleaner implements JobExecutor {
+export class MongoDBCleaner extends JobExecutor {
 
     /**
      *
@@ -11,7 +11,7 @@ export class MongoDBCleaner implements JobExecutor {
      * @param req
      * @param res
      */
-    public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         if (endPoint.db && endPoint.db.mongodb) {
             res.on('close', async () => this.close(res.locals.dl.mongodb));
