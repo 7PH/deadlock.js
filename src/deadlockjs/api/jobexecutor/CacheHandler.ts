@@ -1,16 +1,14 @@
 import {JobExecutor} from "./JobExecutor";
-import {APIDescription, APIEndPoint, RequestLocal} from "../../../index";
+import {APIEndPoint, RequestLocal} from "../../../index";
 import * as e from "express";
 import {Exportable} from "../util";
 import {PromiseCaching} from "promise-caching";
 
-export class CacheHandler implements JobExecutor {
+export class CacheHandler extends JobExecutor {
 
     private cache: PromiseCaching = new PromiseCaching({returnExpired: false});
 
-    constructor(private readonly api: APIDescription) { }
-
-    public async preprocess(endPoint: APIEndPoint, req: e.Request, res: e.Response): Promise<void | string> {
+    public async execute(endPoint: APIEndPoint, req: e.Request, res: e.Response): Promise<void | string> {
 
         // cache enabled?
         if (typeof this.api.cache === 'undefined' && typeof endPoint.cache === 'undefined' )

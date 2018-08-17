@@ -2,10 +2,10 @@ import {JobExecutor} from "./JobExecutor";
 import * as express from "express";
 import {APIEndPoint} from "../../../index";
 
-export class RequestInitializer implements JobExecutor {
+export class RequestInitializer extends JobExecutor {
 
 
-    public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         res.locals.dl = {
 

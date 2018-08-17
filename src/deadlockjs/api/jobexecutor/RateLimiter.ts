@@ -26,7 +26,7 @@ export interface RateLimiterConfigOverride {
 /**
  * The RateLimiter limits the number of requests which can be made to the API
  */
-export class RateLimiter implements JobExecutor {
+export class RateLimiter extends JobExecutor {
 
     /**
      * Default RateLimiter configuration
@@ -63,6 +63,8 @@ export class RateLimiter implements JobExecutor {
      * @param {APIDescription} api
      */
     constructor (api: APIDescription) {
+        super(api);
+
         this.config = api.rateLimit || RateLimiter.DEFAULT_CONFIG;
         this.activated = api.rateLimit != null;
         setInterval(this.clean.bind(this), 1000);
@@ -102,7 +104,7 @@ export class RateLimiter implements JobExecutor {
      * @param {e.Response} res
      * @returns {Promise<void>}
      */
-    public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         // the module is not activated
         if (! this.activated) return;

@@ -2,9 +2,9 @@ import {JobExecutor} from "./JobExecutor";
 import {APIEndPoint} from "../../../index";
 import * as express from "express";
 
-export class RequestBodyChecker implements JobExecutor {
+export class RequestBodyChecker extends JobExecutor {
 
-    public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         let filtered: any = {};
 

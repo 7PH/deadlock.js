@@ -3,9 +3,9 @@ import {APIEndPoint} from "../../../index";
 import * as express from "express";
 import {PoolConnection} from "mysql";
 
-export class MySQLCleaner implements JobExecutor {
+export class MySQLCleaner extends JobExecutor {
 
-    public async preprocess(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute(endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         if (endPoint.db && endPoint.db.mysql) {
 

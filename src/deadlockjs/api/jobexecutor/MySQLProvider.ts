@@ -4,13 +4,15 @@ import * as mysql from "mysql";
 import * as express from "express";
 
 
-export class MySQLProvider implements JobExecutor {
+export class MySQLProvider extends JobExecutor {
 
     private readonly mysqlPool: mysql.Pool;
 
     private readonly activated: boolean = false;
 
     constructor(api: APIDescription) {
+        super(api);
+
         if (api.db) {
             if (api.db.mysql) {
                 this.activated = true;
@@ -19,7 +21,7 @@ export class MySQLProvider implements JobExecutor {
         }
     }
 
-    public async preprocess (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
+    public async execute (endPoint: APIEndPoint, req: express.Request, res: express.Response): Promise<void> {
 
         return new Promise<void>((resolve, reject) => {
 
