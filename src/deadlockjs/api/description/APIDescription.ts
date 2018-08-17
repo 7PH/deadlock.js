@@ -4,7 +4,6 @@ import {RateLimiterConfig} from "../../../";
 import * as multer from "multer";
 import * as cors from "cors";
 import * as morgan from "morgan";
-import {Options} from "morgan";
 
 
 /** The API description describes the whole API */

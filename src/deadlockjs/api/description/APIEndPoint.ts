@@ -2,6 +2,7 @@ import * as iof from "io-filter";
 import {APIEndPointHandler} from "./APIEndPointHandler";
 import {APIMiddleware} from "./APIMiddleware";
 import {RateLimiterConfigOverride} from "../jobexecutor";
+import {Request, Response} from "express";
 
 /**
  * Acceptable method
@@ -27,6 +28,8 @@ export interface APIEndPoint {
     cache?: {
         /** expire time in milliseconds */
         expire: number;
+        /** custom cache keyGen generator */
+        key?: (req: Request, res: Response) => any;
     };
 
     /** ddos protection configuration override @TODO implement */

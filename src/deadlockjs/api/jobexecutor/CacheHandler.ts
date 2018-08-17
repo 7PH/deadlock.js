@@ -14,17 +14,24 @@ export class CacheHandler extends JobExecutor {
         if (typeof this.api.cache === 'undefined' && typeof endPoint.cache === 'undefined' )
             return;
 
+        // cache keyGen
+        let cacheKey: any;
+        if (typeof endPoint.cache === 'undefined' || typeof endPoint.cache.key == 'undefined')
+            cacheKey = endPoint;
+        else
+            cacheKey = endPoint.cache.key(req, res);
+
         // cache expiration
         let expire: number = (endPoint.cache || this.api.cache || {expire: 1000}).expire;
 
         // bind cache storage listener
-        res.on('close', () => this.updateCache(endPoint, expire, res.locals.dl));
-        res.on('finish', () => this.updateCache(endPoint, expire, res.locals.dl));
+        res.on('close', () => this.updateCache(endPoint, cacheKey, expire, res.locals.dl));
+        res.on('finish', () => this.updateCache(endPoint, cacheKey, expire, res.locals.dl));
 
         // fetch the result
         try {
 
-            return await this.cache.get<string>(endPoint, expire);
+            return await this.cache.get<string>(cacheKey, expire);
         } catch (e) {
 
             return;
@@ -34,10 +41,11 @@ export class CacheHandler extends JobExecutor {
     /**
      *
      * @param endPoint
+     * @param cacheKey
      * @param expire
      * @param dl
      */
-    public updateCache(endPoint: APIEndPoint, expire: number, dl: RequestLocal): void {
+    public updateCache(endPoint: APIEndPoint, cacheKey: any, expire: number, dl: RequestLocal): void {
 
         if (typeof dl.cacheUpdate !== "undefined") {
 
@@ -47,7 +55,7 @@ export class CacheHandler extends JobExecutor {
             else
                 cache = dl.cacheUpdate;
 
-            this.cache.store<string>(endPoint, expire, cache);
+            this.cache.store<string>(cacheKey, expire, cache);
         }
     }
 
