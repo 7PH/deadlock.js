@@ -2,7 +2,7 @@
 
 <p align="center">
     <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" />
-    <img src="https://img.shields.io/badge/npm-v1.2.73-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/npm-v1.3.0-brightgreen.svg" />
 </p>
 
 ## intro
@@ -31,7 +31,7 @@ Here is te main list of feature that deadlock.js aims to provide.
 - [x] file upload
 - [x] cors handling
 - [x] https & http2 Support
-- [ ] logs
+- [x] logs
 - [ ] internal statistics (hits, execution time)
 - [ ] internal api (retrieve stats, dynamically change route, ip blacklist/whitelist, etc)
 
