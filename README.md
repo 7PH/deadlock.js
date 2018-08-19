@@ -19,7 +19,7 @@ npm i --save deadlockjs
 ```
 
 ## features
-Here is te main list of feature that deadlock.js aims to provide.
+Here are the main features provided by deadlock.js
 - [x] full API specification in a single object
 - [x] rate limit - delay and drop requests
 - [x] ip whitelist&blacklist for rate limit
