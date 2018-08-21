@@ -1,2 +1,2 @@
 
-export * from './deadlockjs'
+export * from './deadlock'

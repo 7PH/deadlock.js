@@ -1,6 +1,6 @@
 import {APIDescription, RequestLocal} from "../src";
 import * as request from "request-promise-native"
-import {DeadLockJS} from "../src/deadlockjs";
+import {DeadLock} from "../src/deadlock";
 import {ObjectFilter, RegExpFilter} from "io-filter";
 
 const HOST: string = 'localhost';
@@ -70,7 +70,7 @@ describe('DeadLockJS test', function () {
 
     /** Setup server */
     beforeEach(async function () {
-        this.httpServer = await DeadLockJS.startApp(api);
+        this.httpServer = await DeadLock.startApp(api);
         this.baseUrl = 'http://' + HOST + ':' + PORT + PATH + '/';
     });
 

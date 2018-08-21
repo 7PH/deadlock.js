@@ -1,6 +1,5 @@
 import {APIDescription, RequestLocal} from "../src";
-import * as request from "request-promise-native"
-import {DeadLockJS} from "../src/deadlockjs";
+import {DeadLock} from "../src/deadlock";
 import {ObjectFilter, RegExpFilter} from "io-filter";
 
 const HOST: string = 'localhost';
@@ -55,5 +54,5 @@ const api: APIDescription = {
 
 (async () => {
 
-    await DeadLockJS.startApp(api);
+    await DeadLock.startApp(api);
 })();

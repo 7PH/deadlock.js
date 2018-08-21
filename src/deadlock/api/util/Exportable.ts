@@ -29,6 +29,10 @@ export abstract class Exportable implements IExportable {
         return value;
     }
 
+    /**
+     *
+     * @returns {object}
+     */
     public export(): object {
         let data: any;
         if (typeof this.fields === 'undefined')
@@ -41,6 +45,11 @@ export abstract class Exportable implements IExportable {
         return data;
     }
 
+    /**
+     *
+     * @param {string | object} data
+     * @returns {this}
+     */
     public import(data: string | object): this {
 
         let json: any = typeof data === 'string' ? JSON.parse(data) : data;
@@ -50,7 +59,7 @@ export abstract class Exportable implements IExportable {
             if (! json.hasOwnProperty(key))
                 continue;
 
-            // curr value of the value
+            // current local value
             const localValue: any = (<any>this)[key];
 
             // attribute exists on the object but does not have the same type

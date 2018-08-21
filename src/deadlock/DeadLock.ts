@@ -17,7 +17,7 @@ import * as morgan from "morgan";
 /**
  * Main utility class
  */
-export class DeadLockJS {
+export class DeadLock {
 
     /**
      * Build and start an express app with a specified api description
@@ -32,7 +32,7 @@ export class DeadLockJS {
         }
 
         // These are the workers handling http requests
-        const app: Application = DeadLockJS.getApp(api);
+        const app: Application = DeadLock.getApp(api);
         const options: spdy.ServerOptions = {};
         if (api.ssl) {
             options.spdy = {plain: false};
@@ -95,7 +95,7 @@ export class DeadLockJS {
             app.use(express.static(api.static));
 
         // attach the API here
-        app.use('/', DeadLockJS.buildRouter(api));
+        app.use('/', DeadLock.buildRouter(api));
 
         // catch 404 and forward to error handler
         app.use(function(req: any, res: any, next: any) {
@@ -145,7 +145,7 @@ export class DeadLockJS {
 
         // attach the job executor(s)
         if (parent.middleware != null && depth > 0)
-            router.use(DeadLockJS.buildMiddleware(parent.middleware));
+            router.use(DeadLock.buildMiddleware(parent.middleware));
 
         // attach directory routes
         for (const routePath in routes) {
@@ -168,7 +168,7 @@ export class DeadLockJS {
                     endPoint.method = ['get', 'post', 'put', 'delete'];
 
                 if (api.verbose)
-                    console.log(DeadLockJS.endPointToString(api, endPoint, path + routePath));
+                    console.log(DeadLock.endPointToString(api, endPoint, path + routePath));
 
                 // attach handler to route with provided methods
                 const handler: RequestHandler = wrapper.wrap.bind(wrapper, endPoint);
@@ -187,7 +187,7 @@ export class DeadLockJS {
                  */
 
                 if (api.verbose)
-                    console.log(DeadLockJS.directoryToString(path + routePath));
+                    console.log(DeadLock.directoryToString(path + routePath));
                 let subRouter: express.Router = this.buildRouterForRoutes(api, wrapper, (route as APIDirectory).routes, route as APIDirectory, path + routePath, depth + 1);
                 router.use(routePath, subRouter);
             }
