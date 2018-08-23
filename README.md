@@ -40,7 +40,7 @@ Here are the main features provided by deadlock.js
 Here is a simple working example
 ```javascript
 
-const DeadLockJS = require('deadlockjs').DeadLockJS;
+const DeadLock = require('deadlockjs').DeadLock;
 
 const api = {
     routes: {
@@ -48,7 +48,7 @@ const api = {
     }
 };
 
-DeadLockJS
+DeadLock
     .startApp(api)
     .then(() => console.log("Server started"));
 ```
@@ -60,7 +60,7 @@ That's all you need to get your web server up and running!
 Here is an example of a web app with custom middleware, rate limit, mysql connection, and request body validation
 
 ```typescript
-import {APIDescription, APIRouteType, DeadLockJS, RequestLocal} from "deadlockjs";
+import {APIDescription, APIRouteType, DeadLock, RequestLocal} from "deadlockjs";
 import {ObjectFilter, RegExpFilter, ValueTypeFilter} from "io-filter";
 
 const api: APIDescription = {
@@ -160,7 +160,7 @@ const api: APIDescription = {
     }
 };
 
-DeadLockJS
+DeadLock
     .startApp(api)
     .then(() => console.log("Server started"));
 ```
