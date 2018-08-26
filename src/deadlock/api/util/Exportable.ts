@@ -6,7 +6,10 @@ import {IExportable} from "./IExportable";
  */
 export abstract class Exportable implements IExportable {
 
-    public abstract fields?: string[];
+    /**
+     *
+     */
+    public fields?: string[];
 
     /**
      *
