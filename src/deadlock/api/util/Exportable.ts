@@ -62,7 +62,7 @@ export abstract class Exportable implements IExportable {
         for (let field in this)
             if (this.hasOwnProperty(field))
                 if (Exportable.isExportable(this, field))
-                    data[field] = (<any>this)[field];
+                    data[field] = this[field];
         return data;
     }
 
