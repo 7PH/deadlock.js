@@ -131,4 +131,39 @@ export class MySQL {
         const rows: any[] = await MySQL.awaitQuery(mysql, query, data);
         return rows.map(row => new Construct(row));
     }
+
+    /**
+     *
+     * @param {Connection} mysql
+     * @param {{new(data: any): Class}} Construct
+     * @param id
+     * @returns {Promise<Class[]>}
+     */
+    public static async fetchById<Class extends Exportable=Exportable>(
+        mysql: Connection,
+        Construct: new(data: any) => Class,
+        id: number
+    ): Promise<Class> {
+
+        return (await MySQL.fetch(mysql, Construct, `WHERE id = ?`, [id]))[0];
+    }
+
+    /**
+     *
+     * @param {Connection} mysql
+     * @param {{new(data: any): Class}} Construct
+     * @param ids
+     * @returns {Promise<Class[]>}
+     */
+    public static async fetchByIds<Class extends Exportable=Exportable>(
+        mysql: Connection,
+        Construct: new(data: any) => Class,
+        ids: number[]
+    ): Promise<Class[]> {
+
+        if (ids.length === 0)
+            return [];
+
+        return MySQL.fetch(mysql, Construct, `WHERE id IN (?)`, [ids]);
+    }
 }

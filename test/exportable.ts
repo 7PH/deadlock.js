@@ -51,7 +51,8 @@ console.log(MySQL.getImportableData(User));
 // `users`.`id` as `id`,`users`.`email` as `email`,`users`.`password` as `password`,`users`.`date_inscription` as `dateInscription`
 
 // get all the users:
-// await MySQL.fetch<User>(mysql, User)
+// await MySQL.fetch(mysql, User)
 
 // get the user whose id is 12:
-// await MySQL.fetch<User>(mysql, User, 'WHERE id=?', [12])
+// await MySQL.fetch(mysql, User, 'WHERE id=?', [12])
+
