@@ -1,23 +1,34 @@
+import "reflect-metadata";
 import {IExportable} from "./IExportable";
 
-/**
- * @TODO document
- * @TODO test
- */
+
 export abstract class Exportable implements IExportable {
 
-    /**
-     *
-     */
-    public fields?: string[];
+    public static metaKey: symbol = Symbol('exportable');
 
     /**
      *
-     * @param data
+     */
+    public static exportable() {
+        return Reflect.metadata(Exportable.metaKey, true);
+    }
+
+    /**
+     *
+     * @param {Exportable} target
+     * @param {string} key
+     * @returns {boolean}
+     */
+    public static isExportable(target: Exportable, key: string): boolean {
+        return Reflect.getMetadata(Exportable.metaKey, target, key);
+    }
+
+    /**
+     *
      * @returns {string}
      */
-    public static stringify(data: any) {
-        return JSON.stringify(data, Exportable.replacer);
+    public static stringify(exportable: Exportable): string {
+        return JSON.stringify(exportable, this.replacer);
     }
 
     /**
@@ -34,17 +45,24 @@ export abstract class Exportable implements IExportable {
 
     /**
      *
+     * @param {object | string} data
+     */
+    constructor(data?: object | string) {
+
+        if (typeof data !== 'undefined')
+            this.import(data);
+    }
+
+    /**
+     *
      * @returns {object}
      */
     public export(): object {
-        let data: any;
-        if (typeof this.fields === 'undefined')
-            data = this;
-        else {
-            data = {};
-            for (let field of this.fields)
-                data[field] = (<any>this)[field];
-        }
+        let data: any = {};
+        for (let field in this)
+            if (this.hasOwnProperty(field))
+                if (Exportable.isExportable(this, field))
+                    data[field] = (<any>this)[field];
         return data;
     }
 
@@ -78,10 +96,10 @@ export abstract class Exportable implements IExportable {
                 case 'object':
 
                     if (localValue instanceof Exportable)
-                        // recursive import
+                    // recursive import
                         localValue.import(val);
                     else
-                        // default behaviour
+                    // default behaviour
                         (<any>this)[key] = val;
 
                     break;
@@ -96,3 +114,7 @@ export abstract class Exportable implements IExportable {
         return this;
     }
 }
+
+
+export const exportable = Exportable.exportable;
+export const isExportable = Exportable.isExportable;
