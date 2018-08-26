@@ -50,5 +50,8 @@ console.log(user2.export());
 console.log(MySQL.getImportableData(User));
 // `users`.`id` as `id`,`users`.`email` as `email`,`users`.`password` as `password`,`users`.`date_inscription` as `dateInscription`
 
-// use:
-// MySQL.fetch<User>(mysql, User, `WHERE id=?`, [12]);
+// get all the users:
+// await MySQL.fetch<User>(mysql, User)
+
+// get the user whose id is 12:
+// await MySQL.fetch<User>(mysql, User, 'WHERE id=?', [12])
