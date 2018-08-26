@@ -4,13 +4,36 @@ import {IExportable} from "./IExportable";
 
 export abstract class Exportable implements IExportable {
 
-    public static metaKey: symbol = Symbol('exportable');
+    public static importKey: symbol = Symbol('importable');
+    public static exportKey: symbol = Symbol('exportable');
+
+    /**
+     *
+     * @param table
+     * @param {(string | string[])[]} fields
+     * @returns
+     * @constructor
+     */
+    public static Importable(table: string, fields: (string | string[])[]) {
+
+        // normalized fields
+        // [
+        //    [objectField, dbField]
+        // ]
+        const normalizedFields: string[][] = fields
+            .map(field => typeof field === 'string' ? [field, field] : field);
+
+        return Reflect.metadata(Exportable.importKey, {
+            table: table,
+            fields: normalizedFields
+        });
+    }
 
     /**
      *
      */
     public static exportable() {
-        return Reflect.metadata(Exportable.metaKey, true);
+        return Reflect.metadata(Exportable.exportKey, true);
     }
 
     /**
@@ -20,7 +43,7 @@ export abstract class Exportable implements IExportable {
      * @returns {boolean}
      */
     public static isExportable(target: Exportable, key: string): boolean {
-        return Reflect.getMetadata(Exportable.metaKey, target, key);
+        return Reflect.getMetadata(Exportable.exportKey, target, key);
     }
 
     /**
@@ -38,8 +61,10 @@ export abstract class Exportable implements IExportable {
      * @returns {any}
      */
     public static replacer(key: string, value: any) {
+
         if (value instanceof Exportable)
             return value.export();
+
         return value;
     }
 
@@ -55,14 +80,26 @@ export abstract class Exportable implements IExportable {
 
     /**
      *
+     * @returns {string[]}
+     */
+    public getFields(): string[] {
+        const fields: string[] = [];
+        for (let field in this)
+            if (this.hasOwnProperty(field))
+                fields.push(field);
+        return fields;
+    }
+
+    /**
+     *
      * @returns {object}
      */
     public export(): object {
+        const fields: string[] = this.getFields();
         let data: any = {};
-        for (let field in this)
-            if (this.hasOwnProperty(field))
-                if (Exportable.isExportable(this, field))
-                    data[field] = this[field];
+        for (let field of fields)
+            if (Exportable.isExportable(this, field))
+                data[field] = (this as any)[field];
         return data;
     }
 
@@ -117,4 +154,5 @@ export abstract class Exportable implements IExportable {
 
 
 export const exportable = Exportable.exportable;
+export const Importable = Exportable.Importable;
 export const isExportable = Exportable.isExportable;

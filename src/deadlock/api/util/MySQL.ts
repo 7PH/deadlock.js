@@ -1,4 +1,5 @@
 import {Connection, MysqlError} from "mysql";
+import {Exportable} from "./Exportable";
 
 
 export class MySQL {
@@ -85,5 +86,49 @@ export class MySQL {
     public static async exec(mysql: Connection, rqt: string, data?: Array<any>): Promise<void> {
 
         await MySQL.awaitQuery(mysql, rqt, data);
+    }
+
+    /**
+     *
+     * @param {typeof Exportable} Obj
+     * @returns {string}
+     */
+    public static getImportableData(Obj: new(data: any) => Exportable): {fields: string, table: string} | undefined {
+
+        let data: {fields: string[][], table: string} | undefined = Reflect.getMetadata(Exportable.importKey, Obj);
+
+        if (typeof data === 'undefined')
+            return;
+
+        return {
+            fields: data.fields
+                .map(field => `\`${(data as any).table}\`.\`${field[1]}\` as \`${field[0]}\``)
+                .join(','),
+            table: data.table
+        };
+    }
+
+    /**
+     *
+     * @param {Connection} mysql
+     * @param {{new(data: any): Class}} Construct
+     * @param rqt
+     * @param {Array<any>} data
+     * @returns {Promise<Class[]>}
+     */
+    public static async fetch<Class extends Exportable=Exportable>(
+        mysql: Connection,
+        Construct: new(data: any) => Class,
+        rqt?: string,
+        data?: Array<any>
+    ): Promise<Class[]> {
+
+        const importableData: {fields: string, table: string} | undefined = MySQL.getImportableData(Construct);
+        if (typeof importableData === 'undefined')
+            throw new Error("Error using Importable object");
+
+        const query: string = `SELECT ${importableData.fields} FROM ${importableData.table} ${rqt || ''}`;
+        const rows: any[] = await MySQL.awaitQuery(mysql, query, data);
+        return rows.map(row => new Construct(row));
     }
 }
