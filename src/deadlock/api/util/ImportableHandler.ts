@@ -2,7 +2,13 @@
 
 export interface ImportableMeta {
     table: string;
-    fields: string[][];
+    fields: FieldMeta[];
+}
+
+export interface FieldMeta {
+    propName: string;
+    fieldName: string;
+    primary: boolean;
 }
 
 export class ImportableHandler {
@@ -36,9 +42,9 @@ export class ImportableHandler {
 
     /**
      * Define a property which is importable
-     * @param fieldName
+     * @param field
      */
-    public static importable(fieldName?: string) {
+    public static importable(field?: string | Partial<{fieldName: string, primary: boolean}>) {
         return function decorator(target: any, propName: string): void {
 
             let metadata: ImportableMeta = Reflect.getMetadata(ImportableHandler.KEY, target.constructor)
@@ -47,7 +53,27 @@ export class ImportableHandler {
                     fields: []
                 };
 
-            metadata.fields.push([propName, fieldName || propName]);
+            let fieldObject: FieldMeta;
+            if (typeof field === 'string')
+                fieldObject = {
+                    fieldName: field,
+                    propName,
+                    primary: false
+                };
+            else if (typeof field === 'object')
+                fieldObject = {
+                    fieldName: field.fieldName || propName,
+                    primary: typeof field.primary === 'undefined' ? false : field.primary,
+                    propName
+                };
+            else
+                fieldObject = {
+                    fieldName: propName,
+                    primary: false,
+                    propName
+                };
+
+            metadata.fields.push(fieldObject);
 
             Reflect.defineMetadata(ImportableHandler.KEY, metadata, target.constructor);
         }

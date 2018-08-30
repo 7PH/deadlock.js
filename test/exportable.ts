@@ -4,7 +4,7 @@ import {Exportable, exportable, importable, Importable, MySQL} from "../src/dead
 class User extends Exportable {
 
     @exportable()
-    @importable('id')
+    @importable({primary: true})
     public id: number;
 
     @exportable()
@@ -24,6 +24,7 @@ let user1: User = new User();
 user1.id = 12;
 user1.email = 'foo@bar.yea';
 user1.password = 'olelo';
+user1.dateInscription = Date.now() / 1000;
 
 console.log('user1', user1);
 // User { id: 12, email: 'foo@bar.yea', password: 'olelo' }
@@ -48,4 +49,3 @@ console.log('fields', MySQL.getImportableData(User));
 
 // get the user whose id is 12:
 // await MySQL.fetch(mysql, User, 'WHERE id=?', [12])
-

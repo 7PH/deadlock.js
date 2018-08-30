@@ -14,6 +14,7 @@ export class MySQL {
      * @private
      */
     public static async awaitQuery(mysql: Connection, rqt: string, data?: any): Promise<any> {
+        console.log(rqt, data);
         return new Promise<any>((resolve, reject) => {
             mysql.query(rqt, data, (err: MysqlError | null, data: any) => {
                 if (err)
@@ -91,26 +92,6 @@ export class MySQL {
 
     /**
      *
-     * @param {typeof Exportable} Obj
-     * @returns {string}
-     */
-    public static getImportableData(Obj: new(data: any) => Exportable): {fields: string, table: string} | undefined {
-
-        let data: ImportableMeta | undefined = Reflect.getMetadata(ImportableHandler.KEY, Obj);
-
-        if (typeof data === 'undefined')
-            return;
-
-        return {
-            fields: data.fields
-                .map(field => `\`${(data as any).table}\`.\`${field[1]}\` as \`${field[0]}\``)
-                .join(','),
-            table: data.table
-        };
-    }
-
-    /**
-     *
      * @param {Connection} mysql
      * @param {{new(data: any): Class}} Construct
      * @param rqt
@@ -166,5 +147,60 @@ export class MySQL {
             return [];
 
         return MySQL.fetch(mysql, Construct, `WHERE id IN (?)`, [ids]);
+    }
+
+    /**
+     *
+     * @param {Connection} mysql
+     * @param instance
+     * @returns {Promise<void>}
+     */
+    public static insertEntity<Class>(mysql: Connection, instance: Class): Promise<number> {
+
+        let data: ImportableMeta | undefined = Reflect.getMetadata(ImportableHandler.KEY, instance.constructor);
+
+        if (typeof data === 'undefined')
+            throw new Error("Unable to fetch metadata about the object");
+
+        let entries: string[] = [];
+        let fields: string[] = [];
+        data.fields
+            .forEach(field => {
+                if (field.primary)
+                    return;
+
+                let value: any = (<any>instance)[field.propName];
+                if (typeof value === 'undefined')
+                    throw new Error(`The property ${field.propName} should exist on object ${instance.constructor}`);
+
+                entries.push(value.toString());
+                fields.push(field.fieldName);
+            });
+
+        let fieldsQuery: string = fields.map(field => `\`${field}\``).join(',');
+        let questionMarks: string = fields.map(() => '?').join(',');
+        let rqt: string = `INSERT INTO ${data.table} (${fieldsQuery}) VALUES (${questionMarks})`;
+
+        return MySQL.insert(mysql, rqt, entries);
+    }
+
+    /**
+     *
+     * @param {typeof Exportable} Obj
+     * @returns {string}
+     */
+    public static getImportableData(Obj: new(data: any) => Exportable): {fields: string, table: string} | undefined {
+
+        let data: ImportableMeta | undefined = Reflect.getMetadata(ImportableHandler.KEY, Obj);
+
+        if (typeof data === 'undefined')
+            return;
+
+        return {
+            fields: data.fields
+                .map(field => `\`${(data as any).table}\`.\`${field.fieldName}\` as \`${field.propName}\``)
+                .join(','),
+            table: data.table
+        };
     }
 }
