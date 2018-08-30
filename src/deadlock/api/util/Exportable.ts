@@ -2,6 +2,11 @@ import "reflect-metadata";
 import {IExportable} from "./IExportable";
 
 
+export interface ImportableMeta {
+    table: string;
+    fields: string[][];
+}
+
 export abstract class Exportable implements IExportable {
 
     public static importKey: symbol = Symbol('importable');
@@ -10,23 +15,43 @@ export abstract class Exportable implements IExportable {
     /**
      *
      * @param table
-     * @param {(string | string[])[]} fields
      * @returns
      * @constructor
      */
-    public static Importable(table: string, fields: (string | string[])[]) {
+    public static Importable(table?: string) {
 
-        // normalized fields
-        // [
-        //    [objectField, dbField]
-        // ]
-        const normalizedFields: string[][] = fields
-            .map(field => typeof field === 'string' ? [field, field] : field);
+        return function(constructor: Function) {
 
-        return Reflect.metadata(Exportable.importKey, {
-            table: table,
-            fields: normalizedFields
-        });
+            let metadata: ImportableMeta = Reflect.getMetadata(Exportable.importKey, constructor)
+                || {
+                    table: null,
+                    fields: []
+                };
+
+            metadata.table = table || constructor.name;
+
+            Reflect.defineMetadata(Exportable.importKey, metadata, constructor);
+        };
+    }
+
+    /**
+     * Define a property which is importable
+     * @param fieldName
+     */
+    public static importable(fieldName?: string) {
+        return function decorator(target: any, propName: string): void {
+            console.log("importable", target.constructor, fieldName, propName);
+
+            let metadata: ImportableMeta = Reflect.getMetadata(Exportable.importKey, target.constructor)
+                || {
+                    table: target.constructor.name,
+                    fields: []
+                };
+
+            metadata.fields.push([propName, fieldName || propName]);
+
+            Reflect.defineMetadata(Exportable.importKey, metadata, target.constructor);
+        }
     }
 
     /**
@@ -155,4 +180,5 @@ export abstract class Exportable implements IExportable {
 
 export const exportable = Exportable.exportable;
 export const Importable = Exportable.Importable;
+export const importable = Exportable.importable;
 export const isExportable = Exportable.isExportable;
