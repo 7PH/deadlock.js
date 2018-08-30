@@ -1,50 +1,9 @@
 import "reflect-metadata";
 import {IExportable} from "./IExportable";
+import {ExportableHandler} from "./ExportableHandler";
 
 
 export abstract class Exportable implements IExportable {
-
-    public static importKey: symbol = Symbol('importable');
-    public static exportKey: symbol = Symbol('exportable');
-
-    /**
-     *
-     * @param table
-     * @param {(string | string[])[]} fields
-     * @returns
-     * @constructor
-     */
-    public static Importable(table: string, fields: (string | string[])[]) {
-
-        // normalized fields
-        // [
-        //    [objectField, dbField]
-        // ]
-        const normalizedFields: string[][] = fields
-            .map(field => typeof field === 'string' ? [field, field] : field);
-
-        return Reflect.metadata(Exportable.importKey, {
-            table: table,
-            fields: normalizedFields
-        });
-    }
-
-    /**
-     *
-     */
-    public static exportable() {
-        return Reflect.metadata(Exportable.exportKey, true);
-    }
-
-    /**
-     *
-     * @param {Exportable} target
-     * @param {string} key
-     * @returns {boolean}
-     */
-    public static isExportable(target: Exportable, key: string): boolean {
-        return Reflect.getMetadata(Exportable.exportKey, target, key);
-    }
 
     /**
      *
@@ -98,7 +57,7 @@ export abstract class Exportable implements IExportable {
         const fields: string[] = this.getFields();
         let data: any = {};
         for (let field of fields)
-            if (Exportable.isExportable(this, field))
+            if (ExportableHandler.isExportable(this, field))
                 data[field] = (this as any)[field];
         return data;
     }
@@ -152,7 +111,3 @@ export abstract class Exportable implements IExportable {
     }
 }
 
-
-export const exportable = Exportable.exportable;
-export const Importable = Exportable.Importable;
-export const isExportable = Exportable.isExportable;
