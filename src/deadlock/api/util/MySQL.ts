@@ -1,5 +1,6 @@
 import {Connection, MysqlError} from "mysql";
-import {Exportable, ImportableMeta} from "./Exportable";
+import {Exportable} from "./Exportable";
+import {ImportableHandler, ImportableMeta} from "./ImportableHandler";
 
 
 export class MySQL {
@@ -95,7 +96,7 @@ export class MySQL {
      */
     public static getImportableData(Obj: new(data: any) => Exportable): {fields: string, table: string} | undefined {
 
-        let data: ImportableMeta | undefined = Reflect.getMetadata(Exportable.importKey, Obj);
+        let data: ImportableMeta | undefined = Reflect.getMetadata(ImportableHandler.KEY, Obj);
 
         if (typeof data === 'undefined')
             return;

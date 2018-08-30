@@ -1,4 +1,4 @@
-import {exportable, Exportable, Importable, importable, MySQL} from "../src/deadlock/api/util";
+import {Exportable, exportable, importable, Importable, MySQL} from "../src/deadlock/api/util";
 
 @Importable("users")
 class User extends Exportable {

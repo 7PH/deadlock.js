@@ -1,75 +1,9 @@
 import "reflect-metadata";
 import {IExportable} from "./IExportable";
+import {ExportableHandler} from "./ExportableHandler";
 
-
-export interface ImportableMeta {
-    table: string;
-    fields: string[][];
-}
 
 export abstract class Exportable implements IExportable {
-
-    public static importKey: symbol = Symbol('importable');
-    public static exportKey: symbol = Symbol('exportable');
-
-    /**
-     *
-     * @param table
-     * @returns
-     * @constructor
-     */
-    public static Importable(table?: string) {
-
-        return function(constructor: Function) {
-
-            let metadata: ImportableMeta = Reflect.getMetadata(Exportable.importKey, constructor)
-                || {
-                    table: null,
-                    fields: []
-                };
-
-            metadata.table = table || constructor.name;
-
-            Reflect.defineMetadata(Exportable.importKey, metadata, constructor);
-        };
-    }
-
-    /**
-     * Define a property which is importable
-     * @param fieldName
-     */
-    public static importable(fieldName?: string) {
-        return function decorator(target: any, propName: string): void {
-            console.log("importable", target.constructor, fieldName, propName);
-
-            let metadata: ImportableMeta = Reflect.getMetadata(Exportable.importKey, target.constructor)
-                || {
-                    table: target.constructor.name,
-                    fields: []
-                };
-
-            metadata.fields.push([propName, fieldName || propName]);
-
-            Reflect.defineMetadata(Exportable.importKey, metadata, target.constructor);
-        }
-    }
-
-    /**
-     *
-     */
-    public static exportable() {
-        return Reflect.metadata(Exportable.exportKey, true);
-    }
-
-    /**
-     *
-     * @param {Exportable} target
-     * @param {string} key
-     * @returns {boolean}
-     */
-    public static isExportable(target: Exportable, key: string): boolean {
-        return Reflect.getMetadata(Exportable.exportKey, target, key);
-    }
 
     /**
      *
@@ -123,7 +57,7 @@ export abstract class Exportable implements IExportable {
         const fields: string[] = this.getFields();
         let data: any = {};
         for (let field of fields)
-            if (Exportable.isExportable(this, field))
+            if (ExportableHandler.isExportable(this, field))
                 data[field] = (this as any)[field];
         return data;
     }
@@ -177,8 +111,3 @@ export abstract class Exportable implements IExportable {
     }
 }
 
-
-export const exportable = Exportable.exportable;
-export const Importable = Exportable.Importable;
-export const importable = Exportable.importable;
-export const isExportable = Exportable.isExportable;
