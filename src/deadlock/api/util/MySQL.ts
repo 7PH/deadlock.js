@@ -14,7 +14,6 @@ export class MySQL {
      * @private
      */
     public static async awaitQuery(mysql: Connection, rqt: string, data?: any): Promise<any> {
-        console.log(rqt, data);
         return new Promise<any>((resolve, reject) => {
             mysql.query(rqt, data, (err: MysqlError | null, data: any) => {
                 if (err)
