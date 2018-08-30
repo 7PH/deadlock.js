@@ -2,7 +2,7 @@
 
 <p align="center">
     <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" />
-    <img src="https://img.shields.io/badge/npm-v1.4.7-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/npm-v1.4.8-brightgreen.svg" />
 </p>
 
 ## intro
@@ -10,7 +10,7 @@ Lightweight Node.js/Express framework written in TypeScript for building secured
 
 
 ## install
-The easiest way to install deadlockjs is with [`npm`][npm].
+The easiest way to install deadlock.js is with [`npm`][npm].
 
 [npm]: https://www.npmjs.com/
 
