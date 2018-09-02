@@ -2,7 +2,7 @@
 
 <p align="center">
     <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" />
-    <img src="https://img.shields.io/badge/npm-v1.4.8-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/npm-v1.4.12-brightgreen.svg" />
 </p>
 
 ## intro

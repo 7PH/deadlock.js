@@ -1,6 +1,6 @@
 {
     "name": "deadlockjs",
-    "version": "1.4.10",
+    "version": "1.4.12",
     "description": "Lightweight Node.js/Express framework for building secured, clustered and well-designed APIs.",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",
@@ -40,6 +40,7 @@
         "@types/spdy": "^3.4.4",
         "cookie-parser": "^1.4.3",
         "cors": "^2.8.4",
+        "deadlockjs-lightorm": "0.0.2",
         "express": "^4.16.3",
         "io-filter": "^2.0.6",
         "mongodb": "^3.0.3",

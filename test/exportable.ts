@@ -1,4 +1,5 @@
-import {Exportable, exportable, importable, Importable, MySQL} from "../src/deadlock/api/util";
+import {Exportable, exportable, importable, Importable} from "deadlockjs-lightorm";
+import {MySQL} from "../src/deadlock/api/util";
 
 @Importable("users")
 class User extends Exportable {

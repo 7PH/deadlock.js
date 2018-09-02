@@ -1,6 +1,5 @@
 import {Connection, MysqlError} from "mysql";
-import {Exportable} from "./Exportable";
-import {ImportableHandler, ImportableMeta} from "./ImportableHandler";
+import {Exportable, ImportableHandler, ImportableMeta} from "deadlockjs-lightorm";
 
 
 export class MySQL {

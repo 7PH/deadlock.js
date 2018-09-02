@@ -1,8 +1,8 @@
 import {JobExecutor} from "./JobExecutor";
 import {APIEndPoint, RequestLocal} from "../../../index";
 import * as e from "express";
-import {Exportable} from "../util";
 import {PromiseCaching} from "promise-caching";
+import {Exportable} from "deadlockjs-lightorm";
 
 export class CacheHandler extends JobExecutor {
 

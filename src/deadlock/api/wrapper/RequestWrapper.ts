@@ -12,8 +12,8 @@ import {MongoDBProvider} from "../jobexecutor";
 import {MongoDBCleaner} from "../jobexecutor";
 import {CacheHandler} from "../jobexecutor";
 import {RequestHandler} from "../jobexecutor";
-import {Exportable} from "../util";
 import {JobResult} from "../jobexecutor/JobResult";
+import {Exportable} from "deadlockjs-lightorm";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
