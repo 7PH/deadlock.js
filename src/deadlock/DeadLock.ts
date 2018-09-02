@@ -211,7 +211,7 @@ export class DeadLock {
             methods = endPoint.method.join('|');
         else
             methods = '*';
-        out += (methods.toUpperCase() + ":").padEnd(32) + path;
+        out += DeadLock.padEnd(methods.toUpperCase() + ":", 32) + path;
         if (typeof api.rateLimit !== 'undefined') {
             let weight: number = (endPoint.rateLimit || api.rateLimit).weight as number;
             let rqtPerSec = api.rateLimit.maxWeightPerSec / weight;
@@ -232,7 +232,17 @@ export class DeadLock {
      * @returns {string}
      */
     public static directoryToString(path: string): string {
-        return "DIR/".padEnd(32) + path;
+        return DeadLock.padEnd("DIR/", 32) + path;
+    }
+
+    /**
+     *
+     * @param {string} str
+     * @param {number} count
+     * @returns {string}
+     */
+    public static padEnd(str: string, count: number): string {
+        return str.length >= count ? str : this.padEnd(str + ' ', count);
     }
 
     /**
