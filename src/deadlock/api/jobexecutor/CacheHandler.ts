@@ -2,7 +2,7 @@ import {JobExecutor} from "./JobExecutor";
 import {APIEndPoint, RequestLocal} from "../../../index";
 import * as e from "express";
 import {PromiseCaching} from "promise-caching";
-import {Exportable} from "deadlockjs-lightorm";
+import {Exporter} from "deadlockjs-lightorm/build/src/export/Exporter";
 
 export class CacheHandler extends JobExecutor {
 
@@ -51,7 +51,7 @@ export class CacheHandler extends JobExecutor {
 
             let cache: string;
             if (typeof dl.cacheUpdate !== 'string')
-                cache = JSON.stringify({ data: dl.cacheUpdate }, Exportable.replacer);
+                cache = JSON.stringify({ data: dl.cacheUpdate }, Exporter.replacer);
             else
                 cache = dl.cacheUpdate;
 

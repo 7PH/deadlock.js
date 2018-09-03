@@ -40,7 +40,7 @@
         "@types/spdy": "^3.4.4",
         "cookie-parser": "^1.4.3",
         "cors": "^2.8.4",
-        "deadlockjs-lightorm": "0.0.2",
+        "deadlockjs-lightorm": "^0.1.2",
         "express": "^4.16.3",
         "io-filter": "^2.0.6",
         "mongodb": "^3.0.3",

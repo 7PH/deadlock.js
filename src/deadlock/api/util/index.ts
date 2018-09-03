@@ -1,2 +1,2 @@
 
-export * from './MySQL'
+export * from './funcs';
