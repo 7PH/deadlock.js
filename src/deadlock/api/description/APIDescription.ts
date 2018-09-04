@@ -13,6 +13,8 @@ export interface APIDescription extends APIDirectory {
 
     cors?: cors.CorsOptions;
 
+    stringify?: (key: string, value: any) => any;
+
     logger?: {
         format: string;
         options: morgan.Options

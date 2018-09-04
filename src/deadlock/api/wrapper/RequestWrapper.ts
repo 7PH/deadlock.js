@@ -13,7 +13,6 @@ import {MongoDBCleaner} from "../jobexecutor";
 import {CacheHandler} from "../jobexecutor";
 import {RequestHandler} from "../jobexecutor";
 import {JobResult} from "../jobexecutor/JobResult";
-import {Exporter} from "deadlockjs-lightorm/build/src/export/Exporter";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -143,7 +142,7 @@ export class RequestWrapper implements IRequestWrapper {
                 res.send(jobResult.result);
             } else {
 
-                const data: any = JSON.stringify({data: jobResult.result}, Exporter.replacer);
+                const data: any = JSON.stringify({data: jobResult.result}, this.api.stringify);
                 res.type('application/json');
                 res.send(data);
             }
