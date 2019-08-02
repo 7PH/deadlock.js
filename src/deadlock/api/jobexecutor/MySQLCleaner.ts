@@ -18,8 +18,11 @@ export class MySQLCleaner extends JobExecutor {
      * Cleans a database connection
      */
     private closeMySQLConnection(mysql: PoolConnection): void {
-        if (mysql)
-            mysql.release();
+        if (mysql) {
+            try {
+                mysql.release();
+            } catch (e) { }
+        }
     }
 
 }
