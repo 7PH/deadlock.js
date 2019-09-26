@@ -9,10 +9,11 @@ export class RequestBodyChecker extends JobExecutor {
         let filtered: any = {};
 
         if (typeof endPoint.paramFilter !== 'undefined') {
-            filtered = endPoint.paramFilter.mask(req.body);
-
-            if (typeof filtered === 'undefined')
-                throw new Error("Error parsing parameters. Some are missing or invalid!");
+            try {
+                filtered = endPoint.paramFilter.mask(req.body);
+            } catch (e) {
+                throw new Error("Invalid parameter: " + e.message);
+            }
         }
 
         res.locals.dl.requestInfo.params = filtered;
