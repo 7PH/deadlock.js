@@ -6,7 +6,7 @@ import {APIEndPointHandler} from "./APIEndPointHandler";
 export interface APIDirectory {
 
     /** one jobexecutor or more */
-    middleware?: APIMiddleware[];
+    middlewares?: APIMiddleware[];
 
     /** routes (can be directory themselves ) */
     routes: {[path: string]: APIDirectory | APIEndPoint | APIEndPointHandler};

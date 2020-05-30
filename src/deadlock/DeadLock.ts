@@ -144,8 +144,8 @@ export class DeadLock {
         const router: express.Router = express.Router({mergeParams: true});
 
         // attach the job executor(s)
-        if (parent.middleware != null && depth > 0)
-            router.use(DeadLock.buildMiddleware(parent.middleware));
+        if (parent.middlewares != null && depth > 0)
+            router.use(DeadLock.buildMiddleware(parent.middlewares));
 
         // attach directory routes
         for (const routePath in routes) {
