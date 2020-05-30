@@ -13,6 +13,7 @@ import {MongoDBCleaner} from "../jobexecutor";
 import {CacheHandler} from "../jobexecutor";
 import {RequestHandler} from "../jobexecutor";
 import {JobResult} from "../jobexecutor/JobResult";
+import {EndPointMiddlewareExecutor} from "../jobexecutor/EndPointMiddlewareExecutor";
 
 
 type PromiseGenerator<T> = () => Promise<T>;
@@ -60,6 +61,9 @@ export class RequestWrapper implements IRequestWrapper {
             [
                 new MySQLProvider(api),
                 new MongoDBProvider(api),
+            ],
+            [
+                new EndPointMiddlewareExecutor(api)
             ],
             [
                 new RequestHandler(api)
@@ -130,10 +134,6 @@ export class RequestWrapper implements IRequestWrapper {
         try {
             // run jobs
             let jobResult: JobResult = await this.executeGenerators(endPoint, req, res);
-
-            // custom middle
-            if (typeof endPoint.middlewares !== 'undefined')
-                await Promise.all(endPoint.middlewares.map(middleware => middleware(req, res)));
 
             // convert the result to string
             if (! (jobResult.executor instanceof RequestHandler) && typeof jobResult.result === 'string') {
